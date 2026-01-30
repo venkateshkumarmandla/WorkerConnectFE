@@ -5,10 +5,14 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 import FormInput from "../components/FormInput";
 import API_CONFIG from '../api/config';
+import { loginEstablishmentApi } from "../api/api";
+import { storage } from "../utils/storage";
 import toast, { Toaster } from "react-hot-toast";
 
 const EstablishmentLogin: React.FC = () => {
   const { t } = useLanguage();
+  const { login } = useAuth();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     // email: '',
@@ -42,7 +46,7 @@ const EstablishmentLogin: React.FC = () => {
 
 
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('🔵 Establishment Login clicked');
 
@@ -52,7 +56,42 @@ const EstablishmentLogin: React.FC = () => {
     }
 
     console.log('✅ Validation passed');
+    setIsLoading(true);
 
+    try {
+      const payload = {
+        mobileNumber: Number(formData.mobileNumber),
+        password: formData.password
+      };
+      const data = await loginEstablishmentApi(payload);
+      console.log("Login successful:", data);
+
+      // Map to User object
+      const user = {
+        type: "establishment" as const, // Force literal type
+        establishmentId: Number(data.establishmentId),
+        establishmentName: data.establishmentName,
+        emailId: data.emailId || "",
+        mobileNumber: Number(data.mobileNumber),
+        contactPerson: data.contactPerson || "",
+        lastLoggedIn: new Date().toISOString()
+      };
+
+      // Save role
+      await storage.set('role', 'establishment');
+
+      // @ts-ignore
+      login(user);
+      navigate("/dashboard/establishment");
+
+    } catch (error) {
+      console.error('❌ Login failed', error);
+      toast.error(t('auth.invalidCredentials') || "Invalid Credentials");
+    } finally {
+      setIsLoading(false);
+    }
+
+    /* SAML BYPASSED
     const baseUrl = API_CONFIG.BASE_URL.replace(/\/api\/?$/, '');
     // const samlUrl = `${baseUrl}/saml/login/establishment`;
 
@@ -65,6 +104,7 @@ const EstablishmentLogin: React.FC = () => {
 
     console.log('🔄 Redirecting to SAML:', samlUrl);
     window.location.href = samlUrl;
+    */
   };
 
 

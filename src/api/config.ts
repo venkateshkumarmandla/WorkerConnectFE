@@ -4,7 +4,15 @@ import { Capacitor } from '@capacitor/core';
 console.log('🔌 [Config] Platform:', Capacitor.getPlatform());
 console.log('📱 [Config] Is Native:', Capacitor.isNativePlatform());
 
+const USE_LOCAL_IP = false;
+const LOCAL_IP_ADDRESS = "192.168.200.162"; // Your local IP
+
 function getBaseUrl(): string {
+  if (USE_LOCAL_IP) {
+    console.log(`🔗 [Config] Using Local Backend URL: http://${LOCAL_IP_ADDRESS}:3001/api`);
+    return `http://${LOCAL_IP_ADDRESS}:3001/api`;
+  }
+
   // ALWAYS use the production URL (User Request)
   console.log('🔗 [Config] Using Production Backend URL');
   return "https://workerconnectbackend.onrender.com/api";

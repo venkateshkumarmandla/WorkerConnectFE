@@ -7,7 +7,7 @@ import FormInput from '../components/FormInput';
 // import BiometricAuth from '../components/BiometricAuth';
 // import { Capacitor } from '@capacitor/core';
 import { getSamlLoginUrl } from '../api/config';
-import { loginWorker } from '../api/api';
+import { loginWorker, getWorkerProfile } from '../api/api';
 import toast, { Toaster } from "react-hot-toast";
 import { storage } from '../utils/storage';
 
@@ -84,13 +84,47 @@ const WorkerLogin: React.FC = () => {
         password: formData.password
       });
 
-      console.log('✅ Credentials valid. Proceeding to SAML...', response);
+      console.log('✅ Credentials valid. Fetching profile...', response);
 
       // PRE-SAVE Token & Context to avoid race conditions
       await storage.set('auth_token', response.token);
       await storage.set('worker_id', response.id.toString());
       await storage.set('role', 'worker');
 
+      // 2. Fetch Profile Details (Bypassing SAML)
+      try {
+        const profileResponse = await getWorkerProfile(response.id);
+        const rawWorker = profileResponse;
+
+        // Map to User Object
+        const mappedUser = {
+          type: "worker" as const,
+          id: rawWorker.id || response.id,
+          firstName: rawWorker.first_name || rawWorker.firstName || '',
+          lastName: rawWorker.last_name || rawWorker.lastName || '',
+          fullName: rawWorker.full_name || rawWorker.fullName || '',
+          mobileNumber: rawWorker.mobile_number || rawWorker.mobileNumber || Number(formData.mobileNumber),
+          emailId: rawWorker.email_id || rawWorker.emailId || '',
+          lastLoggedIn: new Date().toISOString(),
+          establishmentId: 0,
+          estmtWorkerId: 0,
+          establishmentName: '',
+          workLocation: rawWorker.work_location || '',
+          status: rawWorker.status || 'Active'
+        };
+
+        // @ts-ignore
+        login(mappedUser);
+        console.log("✅ Worker logged in:", mappedUser);
+
+        navigate('/dashboard/worker');
+
+      } catch (profileError) {
+        console.error("❌ Failed to fetch profile details", profileError);
+        navigate('/dashboard/worker');
+      }
+
+      /* SAML BYPASSED
       // 2. Proceed with SAML Flow
       const baseSamlUrl = getSamlLoginUrl('worker');
       const returnUrl = window.location.origin;
@@ -98,6 +132,7 @@ const WorkerLogin: React.FC = () => {
 
       console.log('🔄 Redirecting to SAML:', samlUrl);
       window.location.href = samlUrl;
+      */
 
     } catch (error) {
       console.error('❌ Login check failed', error);
