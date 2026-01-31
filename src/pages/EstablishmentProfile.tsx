@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Building2, Edit, Save, X, Mail, Phone, MapPin, Calendar, Users, FileText } from 'lucide-react';
+import { Building2, Edit, Save, X, Phone, MapPin, Calendar, Users, FileText } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import FormInput from '../components/FormInput';
@@ -45,11 +46,40 @@ const EstablishmentProfile: React.FC = () => {
     { value: 'private_commercial', label: 'Private Commercial' }
   ];
 
+  const [uploading, setUploading] = useState(false);
+
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validation
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      toast.error(t('dashboard.invalidFormat'));
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error(t('dashboard.sizeExceeded'));
+      return;
+    }
+
+    setUploading(true);
+    // Simulate API call
+    setTimeout(() => {
+      // In real app, you would upload to server and get back URL
+      const fakeUrl = URL.createObjectURL(file);
+      // We would update the user context here in a real app
+      toast.success(t('dashboard.imageUploadSuccess'));
+      setUploading(false);
+    }, 1500);
+  };
+
   const handleSave = () => {
     // In real app, save to API
     console.log('Saving profile:', formData);
     setIsEditing(false);
-    alert('Profile updated successfully!');
+    toast.success('Profile updated successfully!');
   };
 
   const handleCancel = () => {
@@ -142,33 +172,50 @@ const EstablishmentProfile: React.FC = () => {
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <Building2 className="h-8 w-8 text-orange-600" />
+        {/* Header and Logo Section */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-6">
+            <div className="relative group">
+              <div className="h-24 w-24 rounded-2xl bg-orange-50 border-2 border-dashed border-orange-200 flex items-center justify-center overflow-hidden">
+                {user?.type === 'establishment' && user.logoUrl ? (
+                  <img src={user.logoUrl} alt="Logo" className="h-full w-full object-contain" />
+                ) : (
+                  <Building2 className="h-12 w-12 text-orange-300" />
+                )}
+                {uploading && (
+                  <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+                  </div>
+                )}
+              </div>
+              <label className="absolute -bottom-2 -right-2 bg-orange-600 text-white p-2 rounded-xl shadow-lg cursor-pointer hover:bg-orange-700 transition-colors">
+                <Edit className="h-4 w-4" />
+                <input type="file" className="hidden" accept="image/png, image/jpeg" onChange={handleLogoUpload} />
+              </label>
+            </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
                 {t('establishment.profile')}
               </h1>
-              <p className="text-gray-600">
-                {t('common.welcome')}, {user?.name}
+              <p className="text-gray-500 font-medium mt-1">
+                {t('leaders.logoHelperText')}
               </p>
             </div>
           </div>
-          
-          <div className="flex space-x-2">
+
+          <div className="flex space-x-3">
             {isEditing ? (
               <>
                 <button
                   onClick={handleSave}
-                  className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 text-sm"
+                  className="flex items-center px-6 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 shadow-lg shadow-green-100 font-bold transition-all"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   {t('common.save')}
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 text-sm"
+                  className="flex items-center px-6 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 font-bold transition-all"
                 >
                   <X className="h-4 w-4 mr-2" />
                   {t('common.cancel')}
@@ -177,7 +224,7 @@ const EstablishmentProfile: React.FC = () => {
             ) : (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 text-sm"
+                className="flex items-center px-6 py-2.5 bg-orange-600 text-white rounded-xl hover:bg-orange-700 shadow-lg shadow-orange-100 font-bold transition-all"
               >
                 <Edit className="h-4 w-4 mr-2" />
                 {t('common.edit')}
@@ -341,8 +388,8 @@ const EstablishmentProfile: React.FC = () => {
               <div className="flex justify-between items-center py-2">
                 <span className="text-gray-600 text-sm font-medium">Total Workers:</span>
                 <span className="text-gray-900 font-medium text-sm">
-                  {parseInt(formData.projectDetails.maleWorkers || '0') + 
-                   parseInt(formData.projectDetails.femaleWorkers || '0')}
+                  {parseInt(formData.projectDetails.maleWorkers || '0') +
+                    parseInt(formData.projectDetails.femaleWorkers || '0')}
                 </span>
               </div>
             </div>
@@ -356,13 +403,13 @@ const EstablishmentProfile: React.FC = () => {
             <h3 className="font-semibold text-gray-900 mb-1">Worker Management</h3>
             <p className="text-sm text-gray-600">Manage registered workers</p>
           </button>
-          
+
           <button className="card-mobile text-center hover:shadow-lg transition-shadow">
             <FileText className="h-8 w-8 text-orange-600 mx-auto mb-2" />
             <h3 className="font-semibold text-gray-900 mb-1">Documents</h3>
             <p className="text-sm text-gray-600">View and update documents</p>
           </button>
-          
+
           <button className="card-mobile text-center hover:shadow-lg transition-shadow">
             <Calendar className="h-8 w-8 text-orange-600 mx-auto mb-2" />
             <h3 className="font-semibold text-gray-900 mb-1">Reports</h3>

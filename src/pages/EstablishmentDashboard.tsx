@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Users, UserCheck, UserX, Calendar, Eye } from 'lucide-react';
+import { Building2, Users, UserCheck, UserX, Calendar, Eye, CheckCircle, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Link } from 'react-router-dom';
@@ -59,15 +59,26 @@ const EstablishmentDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center space-x-3 mb-2">
-            <Building2 className="h-8 w-8 text-orange-600" />
+          <div className="flex items-center space-x-4 mb-2">
+            <div className="flex-shrink-0">
+              {user?.type === 'establishment' && user.logoUrl ? (
+                <img
+                  src={user.logoUrl}
+                  alt="Establishment Logo"
+                  className="h-16 w-16 object-contain rounded-lg border border-gray-200 shadow-sm"
+                />
+              ) : (
+                <div className="h-16 w-16 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 border border-orange-200">
+                  <Building2 className="h-10 w-10" />
+                </div>
+              )}
+            </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                {t('establishment.dashboard')}
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                {t('dashboard.welcomeEstSuccess').replace('{0}', (user as any)?.establishmentName || 'Establishment')}
               </h1>
-              <p className="text-gray-600">
-                {t('common.welcome')},{" "}
-                {user?.type === "establishment" && user?.establishmentName}
+              <p className="text-gray-600 font-medium">
+                {t('dashboard.todaySubtext')}
               </p>
             </div>
           </div>
@@ -75,6 +86,41 @@ const EstablishmentDashboard: React.FC = () => {
             <WorkerPresentCount />
             <LastLoggedIn time={user?.lastLoggedIn || undefined} />
           </div>
+        </div>
+
+        {/* Logo Missing Prompt */}
+        {user?.type === 'establishment' && !user.logoUrl && (
+          <div className="mb-6 bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg shadow-sm flex items-start animate-pulse">
+            <AlertCircle className="h-5 w-5 text-orange-600 mr-3 mt-0.5" />
+            <div>
+              <p className="text-sm text-orange-800 font-semibold">
+                {t('dashboard.welcomeEstMissing')}
+              </p>
+              <Link to="/establishment/profile" className="text-sm text-orange-600 hover:text-orange-700 font-bold underline mt-1 block">
+                {t('worker.viewProfile')} →
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {/* Attendance Status Prompts */}
+        <div className="mb-6">
+          {loading ? (
+            <div className="flex items-center text-blue-600 space-x-2 animate-pulse bg-blue-50 p-3 rounded-lg border border-blue-100">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <span className="text-sm font-medium">⏳ Loading attendance data…</span>
+            </div>
+          ) : workers.length > 0 ? (
+            <div className="flex items-center text-green-700 space-x-2 bg-green-50 p-3 rounded-lg border border-green-100">
+              <CheckCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">📈 Attendance data loaded for all workers.</span>
+            </div>
+          ) : (
+            <div className="flex items-center text-orange-700 space-x-2 bg-orange-50 p-3 rounded-lg border border-orange-100">
+              <AlertCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">ℹ️ No worker attendance found for this period.</span>
+            </div>
+          )}
         </div>
 
         {/* Quick Stats */}

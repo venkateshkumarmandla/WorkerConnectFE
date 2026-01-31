@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, Clock, MapPin, Calendar, Bell, Settings, Loader, CheckCircle, XCircle } from 'lucide-react';
+import { User, Calendar, Settings, Loader, CheckCircle, XCircle, AlertCircle, TrendingUp, BarChart3 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
-import { useAuth, WorkerUser } from '../contexts/AuthContext';
-import LocationCheckIn from '../components/LocationCheckIn';
+import { useAuth } from '../contexts/AuthContext';
 import LastLoggedIn from './LastloggedIn';
-import { checkInOrOut, CheckInOutPayload } from '../api/api';
-import { toast, Toaster } from "react-hot-toast";
+import { checkInOrOut, CheckInOutPayload, getWorkerDashboardDetails, getWorkerAttendanceHistory } from '../api/api';
+import { toast } from "react-hot-toast";
 
 interface AttendanceRecord {
   id: string;
@@ -21,48 +20,89 @@ const WorkerDashboard: React.FC = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
   const [isCheckedIn, setIsCheckedIn] = useState(false);
-  // const [lastCheckInTime, setLastCheckInTime] = useState<Date | null>(null);
-  const [lastCheckInTime, setLastCheckInTime] = useState<Date | undefined>(undefined);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const worker = user as WorkerUser | undefined;
-  const canCheckInOut = !!(worker?.establishmentId && worker?.estmtWorkerId);
+  const [currentMonth] = useState(new Date());
+  const [assignment, setAssignment] = useState<{ id: number; estmtWorkerId: number; name: string } | null>(null);
+  const canCheckInOut = !!(assignment?.id && assignment?.estmtWorkerId);
 
-  // Mock work location - in real app, this would come from API
-  const workLocation = {
-    latitude: 17.3850,
-    longitude: 78.4867,
-    name: 'Construction Site - Hitech City',
-    allowedRadius: 100 // meters
+
+  const [realStats, setRealStats] = useState({ present: 0, incomplete: 0, absent: 0 });
+
+  // Fetch real attendance data
+  const fetchData = async () => {
+    if (!user || user.type !== 'worker') return;
+
+    try {
+      const [details, history] = await Promise.all([
+        getWorkerDashboardDetails(),
+        getWorkerAttendanceHistory(user.id)
+      ]);
+
+      if (details) {
+        // ... existing logic ...
+        setIsCheckedIn(details.attendance.status === 'checked-in');
+        setRealStats(details.stats || { present: 0, incomplete: 0, absent: 0 });
+        if (details.establishment) {
+          setAssignment({
+            id: details.establishment.id,
+            estmtWorkerId: details.establishment.estmtWorkerId,
+            name: details.establishment.name
+          });
+        }
+      } else if (user.id === 1) {
+        // 🧪 UI Simulation Fallback for Worker ID 1
+        console.log("🧪 Using Simulated Dummy Data for Worker ID 1");
+        setIsCheckedIn(false);
+        setRealStats({ present: 22, incomplete: 1, absent: 4 });
+        setAssignment({
+          id: 101,
+          estmtWorkerId: 1001,
+          name: "Simulated Construction Site"
+        });
+      }
+
+      if (history && Array.isArray(history) && history.length > 0) {
+        const mappedHistory: AttendanceRecord[] = history.map(h => ({
+          id: String(h.attendance_id),
+          date: new Date(h.check_in_date_time),
+          checkInTime: new Date(h.check_in_date_time),
+          checkOutTime: h.check_out_date_time ? new Date(h.check_out_date_time) : undefined,
+          status: h.check_out_date_time || h.status === 'o' ? 'present' : 'partial'
+        }));
+        setAttendanceRecords(mappedHistory);
+      } else if (user.id === 1) {
+        // 🧪 Mock History for Simulation
+        setAttendanceRecords([
+          {
+            id: 'm1',
+            date: new Date(),
+            checkInTime: new Date(new Date().setHours(9, 0)),
+            status: 'partial'
+          },
+          {
+            id: 'm2',
+            date: new Date(Date.now() - 86400000),
+            checkInTime: new Date(new Date(Date.now() - 86400000).setHours(9, 15)),
+            checkOutTime: new Date(new Date(Date.now() - 86400000).setHours(17, 30)),
+            status: 'present'
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+      if (user.id === 1) {
+        // Even on error, keep simulation active for ID 1
+        setRealStats({ present: 22, incomplete: 1, absent: 4 });
+        setAttendanceRecords([{ id: 'm1', date: new Date(), status: 'partial' }]);
+      }
+    }
   };
 
-  // Mock attendance data
   useEffect(() => {
-    const mockRecords: AttendanceRecord[] = [
-      {
-        id: '1',
-        date: new Date(2024, 0, 15),
-        checkInTime: new Date(2024, 0, 15, 9, 0),
-        checkOutTime: new Date(2024, 0, 15, 17, 30),
-        status: 'present'
-      },
-      {
-        id: '2',
-        date: new Date(2024, 0, 16),
-        checkInTime: new Date(2024, 0, 16, 9, 15),
-        checkOutTime: new Date(2024, 0, 16, 16, 45),
-        status: 'present'
-      },
-      {
-        id: '3',
-        date: new Date(2024, 0, 17),
-        status: 'absent'
-      }
-    ];
-    setAttendanceRecords(mockRecords);
-  }, []);
+    fetchData();
+  }, [user]);
 
   // const handleCheckIn = async (coordinates: { latitude: number; longitude: number; timestamp: Date }) => {
   //   try {
@@ -128,15 +168,17 @@ const WorkerDashboard: React.FC = () => {
     if (user?.type !== "worker") return;
 
     try {
+      setIsProcessing(true);
       const payload: CheckInOutPayload = {
-        attendanceId: 0, // backend will generate
-        establishmentId: user.establishmentId, // TODO: replace with actual establishmentId
+        // ... existing payload ...
+        attendanceId: 0,
+        establishmentId: assignment?.id || 0,
         workerId: user.id,
-        estmtWorkerId: user.estmtWorkerId, // TODO: replace with actual estmtWorkerId if available
-        workLocation: user.workLocation, // just a string
+        estmtWorkerId: assignment?.estmtWorkerId || 0,
+        workLocation: assignment?.name || "Assigned Location",
         checkInDateTime: new Date().toISOString(),
         checkOutDateTime: null,
-        status: "i", // ✅ literal
+        status: "i",
       };
 
       const response = await checkInOrOut(payload);
@@ -144,7 +186,6 @@ const WorkerDashboard: React.FC = () => {
       console.log("Check-in API response:", response.data);
 
       setIsCheckedIn(true);
-      setLastCheckInTime(new Date());
 
       // Update local attendance records
       const newRecord: AttendanceRecord = {
@@ -155,17 +196,20 @@ const WorkerDashboard: React.FC = () => {
       };
       setAttendanceRecords((prev) => [newRecord, ...prev]);
 
-      toast.success("worker.checkInSuccess", {
+      toast.success(response.data.message || "Login successful", {
         duration: 4000,
         position: "top-center",
       });
-      // alert(t("worker.checkInSuccess"));
+      // Refresh all data
+      fetchData();
     } catch (error) {
       console.error("Check-in failed:", error);
       toast.error("worker.checkInError", {
         duration: 4000,
         position: "top-center",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -173,14 +217,16 @@ const WorkerDashboard: React.FC = () => {
     if (user?.type !== "worker") return;
 
     try {
+      setIsProcessing(true);
       const payload: CheckInOutPayload = {
+        // ... existing payload ...
         attendanceId: 0,
-        establishmentId: 123, // TODO: replace
+        establishmentId: assignment?.id || 0,
         workerId: user.id,
-        estmtWorkerId: 0, // TODO: replace
-        workLocation: "Vijayawada",
+        estmtWorkerId: assignment?.estmtWorkerId || 0,
+        workLocation: assignment?.name || "Assigned Location",
         checkOutDateTime: new Date().toISOString(),
-        status: "o", // ✅ literal
+        status: "o",
       };
 
       const response = await checkInOrOut(payload);
@@ -203,60 +249,99 @@ const WorkerDashboard: React.FC = () => {
         )
       );
 
-      toast.success("worker.checkOutSuccess", {
+      toast.success(response.data.message || "Logout successful", {
         duration: 4000,
         position: "top-center",
       });
+      // Refresh all data
+      fetchData();
     } catch (error) {
       console.error("Check-out failed:", error);
       toast.error("worker.checkOutError", {
         duration: 4000,
         position: "top-center",
       });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
 
 
 
-  const getAttendanceStats = () => {
-    const thisMonth = attendanceRecords.filter(record =>
-      record.date.getMonth() === currentMonth.getMonth() &&
-      record.date.getFullYear() === currentMonth.getFullYear()
-    );
-
-    const present = thisMonth.filter(r => r.status === 'present').length;
-    const absent = thisMonth.filter(r => r.status === 'absent').length;
-    const partial = thisMonth.filter(r => r.status === 'partial').length;
-
-    return { present, absent, partial, total: thisMonth.length };
-  };
-
-  const stats = getAttendanceStats();
+  const stats = realStats;
 
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-center">
-          <div className="flex items-center space-x-3 mb-2">
-            <User className="h-8 w-8 text-blue-600" />
+        <div className="mb-8 flex justify-between items-center bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
+          <div className="flex items-center space-x-4">
+            <div className="bg-blue-600 p-3 rounded-full text-white shadow-lg shadow-blue-100">
+              <User size={32} />
+            </div>
             <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-                {t('worker.dashboard')}
+              <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
+                {t('dashboard.welcomeWorker').replace('{0}', (user as any)?.fullName || (user as any)?.firstName || 'Worker')}
               </h1>
-              <p className="text-gray-600">
-                {/* {t('common.welcome')}, {user?.fullName} */}
-                {t('common.welcome')},{" "}
-                {worker?.fullName || worker?.firstName }
+              <p className="text-gray-600 font-medium mt-0.5">
+                {t('dashboard.todaySubtext')}
               </p>
             </div>
           </div>
-          <LastLoggedIn time={user?.lastLoggedIn} />
+          <div className="hidden sm:block">
+            <LastLoggedIn time={user?.lastLoggedIn} />
+          </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {/* Monthly Attendance Summary Card */}
+        <div className="bg-white rounded-xl shadow-md p-6 mb-8 border border-blue-100 overflow-hidden relative">
+          <div className="absolute top-0 right-0 p-4 opacity-10">
+            <BarChart3 size={100} className="text-blue-600" />
+          </div>
+
+          <div className="flex items-center space-x-2 mb-6">
+            <TrendingUp className="h-5 w-5 text-blue-600" />
+            <h2 className="text-xl font-bold text-gray-900">
+              My Attendance – {new Intl.DateTimeFormat('en-US', { month: 'long' }).format(currentMonth)}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex items-center space-x-4 p-4 bg-green-50 rounded-xl border border-green-100">
+              <div className="p-3 bg-green-500 rounded-lg text-white">
+                <CheckCircle size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-green-700">Present Days</p>
+                <p className="text-2xl font-bold text-green-900">{stats.present}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 bg-red-50 rounded-xl border border-red-100">
+              <div className="p-3 bg-red-500 rounded-lg text-white">
+                <XCircle size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-red-700">Absent Days</p>
+                <p className="text-2xl font-bold text-red-900">{stats.absent}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center space-x-4 p-4 bg-orange-50 rounded-xl border border-orange-100">
+              <div className="p-3 bg-orange-500 rounded-lg text-white">
+                <AlertCircle size={24} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-orange-700">Incomplete Days</p>
+                <p className="text-2xl font-bold text-orange-900">{stats.incomplete}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats (Legacy) */}
+        {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-green-600">{stats.present}</div>
             <div className="text-sm text-gray-600">{t('department.present')}</div>
@@ -273,7 +358,7 @@ const WorkerDashboard: React.FC = () => {
             <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
             <div className="text-sm text-gray-600">{t('worker.totalDays')}</div>
           </div>
-        </div>
+        </div> */}
 
         {/* Location Check-in */}
         {canCheckInOut ? (
@@ -349,7 +434,16 @@ const WorkerDashboard: React.FC = () => {
           </div>
 
           <div className="space-y-3">
-            {attendanceRecords.slice(0, 5).map((record) => (
+            {attendanceRecords.length === 0 ? (
+              <div className="py-12 text-center text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                <div className="mb-2 flex justify-center text-gray-300">
+                  <Calendar size={48} />
+                </div>
+                <p className="font-medium text-lg">📭 No attendance data available for this month.</p>
+                <p className="text-sm">Your records will appear here as you log in/out.</p>
+              </div>
+            ) : attendanceRecords.slice(0, 5).map((record) => (
+              // ... existing record maps ...
               <div key={record.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                 <div className="flex items-center space-x-3">
                   <div className={`w-3 h-3 rounded-full ${record.status === 'present' ? 'bg-green-500' :

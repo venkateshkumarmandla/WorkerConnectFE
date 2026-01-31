@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { HardHat, Phone, Lock, Eye, EyeOff } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import FormInput from '../components/FormInput';
 // import BiometricAuth from '../components/BiometricAuth';
 // import { Capacitor } from '@capacitor/core';
-import { getSamlLoginUrl } from '../api/config';
 import { loginWorker, getWorkerProfile } from '../api/api';
 import toast, { Toaster } from "react-hot-toast";
 import { storage } from '../utils/storage';
@@ -15,7 +14,14 @@ const WorkerLogin: React.FC = () => {
   const { t } = useLanguage();
   const { login } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
+
+  React.useEffect(() => {
+    if (location.state?.message) {
+      toast.success(location.state.message);
+    }
+  }, [location.state]);
   const [formData, setFormData] = useState({
     mobileNumber: '',
     password: ''
@@ -114,8 +120,12 @@ const WorkerLogin: React.FC = () => {
         };
 
         // @ts-ignore
-        login(mappedUser);
+        login({ ...mappedUser, attendanceMessage: response.attendanceMessage });
         console.log("✅ Worker logged in:", mappedUser);
+
+        // Use message from backend if available
+        const attendanceMsg = response.attendanceMessage || "🟢 You are logged in.";
+        toast.success(attendanceMsg);
 
         navigate('/dashboard/worker');
 

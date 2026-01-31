@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, UserCheck, UserX, MapPin, Building2, Eye } from 'lucide-react';
+import { Users, UserCheck, UserX, MapPin, Building2, Eye, CheckCircle, AlertCircle } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import LocationMap from '../components/LocationMap';
 import LastLoggedIn from './LastloggedIn';
@@ -63,7 +63,7 @@ const DepartmentDashboard: React.FC = () => {
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-              {t('department.dashboard')}
+              👥 Department Attendance – IT Team
             </h1>
             <p className="text-gray-600">
               Real-time monitoring of all establishments and workers
@@ -73,6 +73,26 @@ const DepartmentDashboard: React.FC = () => {
             <WorkerPresentCount />
             <LastLoggedIn time={user?.lastLoggedIn ?? null} />
           </div>
+        </div>
+
+        {/* Attendance Status Prompts */}
+        <div className="mb-6">
+          {loading ? (
+            <div className="flex items-center text-blue-600 space-x-2 animate-pulse bg-blue-50 p-3 rounded-lg border border-blue-100">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              <span className="text-sm font-medium">⏳ Loading attendance data…</span>
+            </div>
+          ) : establishments.length > 0 ? (
+            <div className="flex items-center text-green-700 space-x-2 bg-green-50 p-3 rounded-lg border border-green-100">
+              <CheckCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">✅ Attendance data loaded successfully.</span>
+            </div>
+          ) : (
+            <div className="flex items-center text-orange-700 space-x-2 bg-orange-50 p-3 rounded-lg border border-orange-100">
+              <AlertCircle className="h-4 w-4" />
+              <span className="text-sm font-medium">ℹ️ No attendance data found for this period.</span>
+            </div>
+          )}
         </div>
 
         {/* View Toggle */}

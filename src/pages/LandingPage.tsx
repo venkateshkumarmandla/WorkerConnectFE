@@ -1,9 +1,11 @@
 import React from 'react';
-import { Users, Building2, Shield, CheckCircle, Smartphone, ArrowRight, User, Briefcase } from 'lucide-react';
+import { Users, Building2, Shield, CheckCircle, Smartphone, ArrowRight, Award, HardHat, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import ResponsiveButton from '../components/ui/ResponsiveButton';
 import ResponsiveCard from '../components/ui/ResponsiveCard';
+import CBN from '../Images/cbn.png';
+import Lokesh from '../Images/lokesh.png';
 
 const LandingPage: React.FC = () => {
   const { t } = useLanguage();
@@ -18,133 +20,111 @@ const LandingPage: React.FC = () => {
   ];
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Hero Section */}
-      <section 
-        className="relative bg-gradient-to-r from-blue-600 to-indigo-700 text-white"
-        style={{
-          paddingTop: 'clamp(3rem, 8vw, 6rem)',
-          paddingBottom: 'clamp(3rem, 8vw, 6rem)',
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-10" aria-hidden="true"></div>
-        <div 
-          className="relative max-w-[min(90rem,95vw)] mx-auto"
-          style={{
-            paddingLeft: 'clamp(1rem, 4vw, 2rem)',
-            paddingRight: 'clamp(1rem, 4vw, 2rem)',
-          }}
-        >
-          <div className="text-center">
-            <h1 
-              className="font-bold mb-[clamp(1rem,3vw,1.5rem)]"
-              style={{
-                fontSize: 'clamp(1.875rem, 5vw, 3.75rem)',
-                lineHeight: '1.2',
-              }}
-            >
-              {t('landing.title')}
+    <div className="relative overflow-hidden bg-white">
+      {/* Hero Section with Gradient Curve */}
+      <section className="relative min-h-[500px] lg:min-h-[600px] flex items-center">
+        {/* Background Gradient Curve */}
+        <div className="absolute inset-x-0 top-0 h-full bg-gradient-to-br from-orange-500 via-orange-600 to-red-700 rounded-bl-[100px] lg:rounded-bl-[250px] -z-10 shadow-2xl"></div>
+
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6 w-full grid lg:grid-cols-2 gap-12 py-12 lg:py-20 relative z-10">
+          {/* Left: Text & Title */}
+          <div className="text-white space-y-6 lg:space-y-8 animate-in fade-in slide-in-from-left duration-700">
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/30 text-sm font-semibold tracking-wide uppercase">
+              <Award className="w-4 h-4" />
+              <span>{t('landing.subtitle')}</span>
+            </div>
+
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tighter shadow-orange-50">
+              <span className="text-orange-600">AP </span>
+              <span className="text-orange-600">Worker Connect</span>
             </h1>
-            <p 
-              className="mb-[clamp(1.5rem,4vw,2rem)] text-blue-100"
-              style={{
-                fontSize: 'clamp(1.125rem, 3vw, 1.5rem)',
-                lineHeight: '1.5',
-              }}
-            >
-              {t('landing.subtitle')}
+
+            <p className="text-xl md:text-2xl text-gray-800 leading-relaxed max-w-xl font-bold">
+              A comprehensive platform for worker registration, management, and departmental oversight.
             </p>
-            <p 
-              className="mb-[clamp(2rem,5vw,3rem)] text-blue-200 mx-auto"
-              style={{
-                fontSize: 'clamp(1rem, 2.5vw, 1.125rem)',
-                maxWidth: 'min(48rem, 90vw)',
-                lineHeight: '1.6',
-              }}
-            >
-              {t('landing.description')}
-            </p>
-            <ResponsiveButton
-              to="/register"
-              variant="secondary"
-              size="lg"
-              icon={ArrowRight}
-              iconPosition="right"
-              className="bg-white text-blue-600 hover:bg-gray-100 shadow-[0_4px_16px_rgba(0,0,0,0.2)]"
-            >
-              {t('landing.getStarted')}
-            </ResponsiveButton>
+
+            <div className="flex flex-wrap gap-4 pt-4">
+              <ResponsiveButton
+                to="/register/worker"
+                variant="primary"
+                size="lg"
+                icon={ArrowRight}
+                iconPosition="right"
+                className="bg-orange-600 hover:bg-orange-700 text-white shadow-xl font-bold px-8 transition-transform hover:scale-105"
+              >
+                {t('landing.registerAsWorker')}
+              </ResponsiveButton>
+            </div>
+          </div>
+
+          {/* Right: Leader Photos */}
+          <div className="flex flex-row items-start justify-center lg:justify-end gap-3 sm:gap-16 animate-in fade-in slide-in-from-right duration-700">
+            {/* Primary Leader */}
+            <div className="flex flex-col items-center group flex-1 max-w-[180px] sm:max-w-none">
+              <div
+                className="relative w-full aspect-[4/5] sm:w-64 sm:h-80 overflow-hidden transition-all duration-500 group-hover:scale-105"
+                role="img"
+                aria-label={t('leaders.cmAltText').replace('{0}', t('leaders.cmName'))}
+              >
+                <img src={CBN} alt={t('leaders.cmName')} className="w-full h-full object-cover object-center" />
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="text-orange-600 font-bold text-lg sm:text-2xl tracking-tight leading-tight">{t('leaders.cmName')}</h3>
+                <p className="text-black font-bold text-xs sm:text-base mt-1">{t('leaders.cmTitle')}</p>
+                <p className="text-gray-600 text-[10px] sm:text-sm font-medium mt-0.5">
+                  {t('leaders.cmGovt')}
+                </p>
+              </div>
+            </div>
+
+            {/* Secondary Leader */}
+            <div className="flex flex-col items-center group flex-1 max-w-[180px] sm:max-w-none">
+              <div
+                className="relative w-full aspect-[4/5] sm:w-64 sm:h-80 overflow-hidden transition-all duration-500 group-hover:scale-105"
+                role="img"
+                aria-label={t('leaders.officialAltText').replace('{0}', t('leaders.officialName'))}
+              >
+                <img src={Lokesh} alt={t('leaders.officialName')} className="w-full h-full object-cover object-center" />
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="text-orange-600 font-bold text-base sm:text-xl leading-tight tracking-tight">{t('leaders.officialName')}</h3>
+                <p className="text-black font-bold text-[10px] sm:text-sm mt-1 leading-tight">{t('leaders.officialTitle')}</p>
+                <p className="text-gray-600 text-[9px] sm:text-xs font-medium mt-0.5">
+                  {t('leaders.officialGovt')}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Quick Access Section */}
-      <section 
-        className="bg-gray-50"
-        style={{
-          paddingTop: 'clamp(3rem, 8vw, 6rem)',
-          paddingBottom: 'clamp(3rem, 8vw, 6rem)',
-        }}
-      >
-        <div 
-          className="max-w-[min(90rem,95vw)] mx-auto"
-          style={{
-            paddingLeft: 'clamp(1rem, 4vw, 2rem)',
-            paddingRight: 'clamp(1rem, 4vw, 2rem)',
-          }}
-        >
-          <div 
-            className="text-center mb-[clamp(2rem,5vw,4rem)]"
-          >
-            <h2 
-              className="font-bold text-gray-900 mb-[clamp(1rem,3vw,1.5rem)]"
-              style={{
-                fontSize: 'clamp(1.5rem, 4vw, 2.25rem)',
-                lineHeight: '1.3',
-              }}
-            >
+      <section className="bg-gray-50 py-16 lg:py-24">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6">
+          <div className="text-center mb-12 lg:mb-16">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
               {t('landing.quickAccess')}
             </h2>
-            <p 
-              className="text-gray-600"
-              style={{
-                fontSize: 'clamp(1rem, 2.5vw, 1.125rem)',
-                lineHeight: '1.6',
-              }}
-            >
+            <div className="h-1.5 w-24 bg-orange-600 mx-auto rounded-full"></div>
+            <p className="text-gray-600 mt-6 text-lg">
               {t('landing.quickAccessSubtitle')}
             </p>
           </div>
 
-          <div 
-            className="grid gap-[clamp(1rem,3vw,1.5rem)]"
-            style={{
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 20rem), 1fr))',
-            }}
-          >
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Worker Registration */}
             <ResponsiveCard
               to="/register/worker"
               icon={Users}
-              iconColor="text-green-600"
+              iconColor="text-orange-600"
               title={t('landing.registerAsWorker')}
               description={t('landing.workerRegistrationDesc')}
               hover
+              className="border-t-4 border-orange-600"
             >
-              <div className="flex items-center text-green-600 group-hover:text-green-700 mt-auto">
-                <span 
-                  className="font-medium"
-                  style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}
-                >
-                  {t('common.start')}
-                </span>
-                <ArrowRight 
-                  className="ml-2"
-                  style={{
-                    width: 'clamp(1rem, 2.5vw, 1.25rem)',
-                    height: 'clamp(1rem, 2.5vw, 1.25rem)',
-                  }}
-                />
+              <div className="flex items-center text-orange-600 font-bold text-sm mt-4 group-hover:translate-x-2 transition-transform">
+                <span>{t('common.start')}</span>
+                <ArrowRight className="ml-2 w-4 h-4" />
               </div>
             </ResponsiveCard>
 
@@ -152,25 +132,15 @@ const LandingPage: React.FC = () => {
             <ResponsiveCard
               to="/register/establishment"
               icon={Building2}
-              iconColor="text-orange-600"
+              iconColor="text-red-600"
               title={t('landing.registerAsEstablishment')}
               description={t('landing.establishmentRegistrationDesc')}
               hover
+              className="border-t-4 border-red-600"
             >
-              <div className="flex items-center text-orange-600 group-hover:text-orange-700 mt-auto">
-                <span 
-                  className="font-medium"
-                  style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}
-                >
-                  {t('common.start')}
-                </span>
-                <ArrowRight 
-                  className="ml-2"
-                  style={{
-                    width: 'clamp(1rem, 2.5vw, 1.25rem)',
-                    height: 'clamp(1rem, 2.5vw, 1.25rem)',
-                  }}
-                />
+              <div className="flex items-center text-red-600 font-bold text-sm mt-4 group-hover:translate-x-2 transition-transform">
+                <span>{t('common.start')}</span>
+                <ArrowRight className="ml-2 w-4 h-4" />
               </div>
             </ResponsiveCard>
 
@@ -178,222 +148,97 @@ const LandingPage: React.FC = () => {
             <ResponsiveCard
               to="/mobile"
               icon={Smartphone}
-              iconColor="text-purple-600"
+              iconColor="text-blue-600"
               title={t('mobile.downloadApp')}
               description={t('mobile.getStarted')}
               hover
+              className="border-t-4 border-blue-600"
             >
-              <div className="flex items-center text-purple-600 group-hover:text-purple-700 mt-auto">
-                <span 
-                  className="font-medium"
-                  style={{ fontSize: 'clamp(0.875rem, 2vw, 1rem)' }}
-                >
-                  {t('mobile.downloadApp')}
-                </span>
-                <ArrowRight 
-                  className="ml-2"
-                  style={{
-                    width: 'clamp(1rem, 2.5vw, 1.25rem)',
-                    height: 'clamp(1rem, 2.5vw, 1.25rem)',
-                  }}
-                />
+              <div className="flex items-center text-blue-600 font-bold text-sm mt-4 group-hover:translate-x-2 transition-transform">
+                <span>{t('mobile.downloadApp')}</span>
+                <ArrowRight className="ml-2 w-4 h-4" />
               </div>
             </ResponsiveCard>
 
-            {/* Login Options - Dropdown for Mobile/PWA, Individual Buttons for Desktop */}
-            <ResponsiveCard
-              className="flex flex-col"
-              hover={false}
-            >
-              <div className="flex items-center mb-[clamp(0.75rem,2vw,1rem)]">
-                <Shield 
-                  className="text-blue-600 mr-3 flex-shrink-0"
-                  style={{
-                    width: 'clamp(1.25rem, 3vw, 2rem)',
-                    height: 'clamp(1.25rem, 3vw, 2rem)',
-                  }}
-                />
-                <h3 
-                  className="font-semibold text-gray-900"
-                  style={{
-                    fontSize: 'clamp(1rem, 2.5vw, 1.25rem)',
-                  }}
-                >
+            {/* Login Options Card */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 border-t-4 border-gray-800 p-6 flex flex-col">
+              <div className="flex items-center mb-6">
+                <Shield className="text-gray-800 mr-3 w-6 h-6" />
+                <h3 className="font-extrabold text-gray-900 text-lg uppercase tracking-tight">
                   {t('landing.loginOptions')}
                 </h3>
               </div>
-              
-              {/* Login Options - Always show as list */}
-              <div 
-                className="space-y-[clamp(0.75rem,2vw,1rem)]"
-              >
+
+              <div className="space-y-2.5">
                 <Link
                   to="/login/worker"
-                  className="block w-full text-center rounded-lg transition-colors touch-manipulation bg-green-50 text-green-700 hover:bg-green-100 active:bg-green-200"
-                  style={{
-                    padding: 'clamp(0.75rem, 2vw, 1rem)',
-                    minHeight: '44px',
-                    fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                    fontWeight: '500',
-                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 bg-gray-50 hover:bg-orange-50 text-gray-700 hover:text-orange-700 font-bold rounded-lg transition-all border border-transparent hover:border-orange-200 text-sm"
                 >
-                  <div className="flex items-center justify-center">
-                    <User 
-                      style={{
-                        width: 'clamp(1rem, 2.5vw, 1.25rem)',
-                        height: 'clamp(1rem, 2.5vw, 1.25rem)',
-                      }}
-                      className="mr-2"
-                    />
-                    <span>{t('landing.loginAsWorker')}</span>
-                  </div>
+                  <HardHat className="w-4 h-4" />
+                  <span>{t('auth.citizenLogin')}</span>
                 </Link>
                 <Link
                   to="/login/establishment"
-                  className="block w-full text-center rounded-lg transition-colors touch-manipulation bg-orange-50 text-orange-700 hover:bg-orange-100 active:bg-orange-200"
-                  style={{
-                    padding: 'clamp(0.75rem, 2vw, 1rem)',
-                    minHeight: '44px',
-                    fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                    fontWeight: '500',
-                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 bg-gray-50 hover:bg-red-50 text-gray-700 hover:text-red-700 font-bold rounded-lg transition-all border border-transparent hover:border-red-200 text-sm"
                 >
-                  <div className="flex items-center justify-center">
-                    <Building2 
-                      style={{
-                        width: 'clamp(1rem, 2.5vw, 1.25rem)',
-                        height: 'clamp(1rem, 2.5vw, 1.25rem)',
-                      }}
-                      className="mr-2"
-                    />
-                    <span>{t('landing.loginAsEstablishment')}</span>
-                  </div>
+                  <Building2 className="w-4 h-4" />
+                  <span>{t('landing.loginAsEstablishment')}</span>
                 </Link>
                 <Link
                   to="/login/department"
-                  className="block w-full text-center rounded-lg transition-colors touch-manipulation bg-blue-50 text-blue-700 hover:bg-blue-100 active:bg-blue-200"
-                  style={{
-                    padding: 'clamp(0.75rem, 2vw, 1rem)',
-                    minHeight: '44px',
-                    fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                    fontWeight: '500',
-                  }}
+                  className="flex items-center gap-3 w-full px-4 py-3 bg-gray-50 hover:bg-blue-50 text-gray-700 hover:text-blue-700 font-bold rounded-lg transition-all border border-transparent hover:border-blue-200 text-sm"
                 >
-                  <div className="flex items-center justify-center">
-                    <Briefcase 
-                      style={{
-                        width: 'clamp(1rem, 2.5vw, 1.25rem)',
-                        height: 'clamp(1rem, 2.5vw, 1.25rem)',
-                      }}
-                      className="mr-2"
-                    />
-                    <span>{t('landing.loginAsDepartment')}</span>
-                  </div>
+                  <ShieldCheck className="w-4 h-4" />
+                  <span>{t('auth.employeeLogin')}</span>
                 </Link>
               </div>
-            </ResponsiveCard>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Benefits Section */}
-      <section 
-        className="bg-white"
-        style={{
-          paddingTop: 'clamp(3rem, 8vw, 6rem)',
-          paddingBottom: 'clamp(3rem, 8vw, 6rem)',
-        }}
-      >
-        <div 
-          className="max-w-[min(90rem,95vw)] mx-auto"
-          style={{
-            paddingLeft: 'clamp(1rem, 4vw, 2rem)',
-            paddingRight: 'clamp(1rem, 4vw, 2rem)',
-          }}
-        >
-          <div 
-            className="grid gap-[clamp(2rem,5vw,3rem)] items-center"
-            style={{
-              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 28rem), 1fr))',
-            }}
-          >
+      <section className="bg-white py-16 lg:py-24">
+        <div className="max-w-[1200px] mx-auto px-4 md:px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 
-                className="font-bold text-gray-900 mb-[clamp(1rem,3vw,1.5rem)]"
-                style={{
-                  fontSize: 'clamp(1.5rem, 4vw, 2.25rem)',
-                  lineHeight: '1.3',
-                }}
-              >
+              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6">
                 {t('landing.whyChoose')}
               </h2>
-              <p 
-                className="text-gray-600 mb-[clamp(1.5rem,4vw,2rem)]"
-                style={{
-                  fontSize: 'clamp(1rem, 2.5vw, 1.125rem)',
-                  lineHeight: '1.6',
-                }}
-              >
+              <p className="text-gray-600 mb-8 text-lg leading-relaxed">
                 {t('landing.whyChooseSubtitle')}
               </p>
-              <div 
-                className="space-y-[clamp(0.75rem,2vw,1rem)]"
-              >
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center">
-                    <CheckCircle 
-                      className="text-green-500 mr-3 flex-shrink-0"
-                      style={{
-                        width: 'clamp(1.25rem, 3vw, 1.5rem)',
-                        height: 'clamp(1.25rem, 3vw, 1.5rem)',
-                        minWidth: '1.25rem',
-                      }}
-                    />
-                    <span 
-                      className="text-gray-700"
-                      style={{
-                        fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                        lineHeight: '1.6',
-                      }}
-                    >
+                  <div key={index} className="flex items-start bg-gray-50 p-4 rounded-xl border border-gray-100 group hover:border-orange-200 transition-all">
+                    <CheckCircle className="text-orange-600 mr-3 w-5 h-5 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-700 font-medium text-sm leading-snug">
                       {benefit}
                     </span>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="relative">
-              <div 
-                className="bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl text-white"
-                style={{
-                  padding: 'clamp(1.5rem, 4vw, 2rem)',
-                }}
-              >
-                <h3 
-                  className="font-bold mb-[clamp(1rem,3vw,1.5rem)]"
-                  style={{
-                    fontSize: 'clamp(1.25rem, 3vw, 1.5rem)',
-                    lineHeight: '1.3',
-                  }}
-                >
+
+            <div className="relative group">
+              <div className="absolute -inset-4 bg-gradient-to-tr from-orange-400 to-red-500 rounded-3xl blur-2xl opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              <div className="relative bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-gray-100">
+                <div className="bg-orange-600 w-16 h-16 rounded-2xl flex items-center justify-center text-white mb-8 shadow-lg shadow-orange-200">
+                  <Award className="w-8 h-8" />
+                </div>
+                <h3 className="text-2xl font-extrabold text-gray-900 mb-4 leading-tight">
                   {t('landing.getStartedToday')}
                 </h3>
-                <p 
-                  className="text-blue-100 mb-[clamp(1rem,3vw,1.5rem)]"
-                  style={{
-                    fontSize: 'clamp(0.875rem, 2vw, 1rem)',
-                    lineHeight: '1.6',
-                  }}
-                >
+                <p className="text-gray-600 mb-8 text-lg">
                   {t('landing.getStartedTodaySubtitle')}
                 </p>
                 <ResponsiveButton
                   to="/register"
-                  variant="secondary"
-                  size="md"
+                  variant="primary"
+                  size="lg"
                   icon={ArrowRight}
                   iconPosition="right"
-                  className="bg-white text-blue-600 hover:bg-gray-100"
+                  className="bg-orange-600 hover:bg-orange-700 text-white shadow-lg shadow-orange-200 font-bold w-full"
                 >
                   {t('landing.startRegistration')}
                 </ResponsiveButton>

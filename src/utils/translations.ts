@@ -69,7 +69,7 @@ export const translations = {
     },
     navigation: {
       home: "Home",
-      login: "Login", 
+      login: "Login",
       register: "Register",
       dashboard: "Dashboard",
       profile: "Profile",
@@ -79,17 +79,20 @@ export const translations = {
       about: "About",
       contact: "Contact",
       menu: "Menu",
-      more: "More"
+      more: "More",
+      downloads: "Downloads",
+      citizenSchemes: "Citizen Schemes Portal",
+      reportsNav: "Reports"
     },
     landing: {
-      title: "WorkerConnect",
+      title: "AP WorkerConnect",
       subtitle: "Connecting Workers, Establishments, and Departments",
       description: "A comprehensive platform for worker registration, establishment management, and departmental oversight in the construction industry.",
       getStarted: "Get Started",
       registerAsWorker: "Register as Worker",
       registerAsEstablishment: "Register as Establishment",
       loginAsWorker: "Worker Login",
-      loginAsEstablishment: "Establishment Login", 
+      loginAsEstablishment: "Establishment Login",
       loginAsDepartment: "Department Login",
       featuresTitle: "Our Platform Features",
       featuresSubtitle: "Comprehensive solutions for all stakeholders in the construction industry",
@@ -132,7 +135,7 @@ export const translations = {
       signOut: "Sign Out",
       username: "Username",
       email: "Email Address",
-      mobileNumber:"Phone Number",
+      mobileNumber: "Phone Number",
       password: "Password",
       confirmPassword: "Confirm Password",
       newPassword: "New Password",
@@ -154,7 +157,9 @@ export const translations = {
       passwordResetSent: "Password reset link sent to your email.",
       invalidCredentials: "Invalid username or password",
       accountLocked: "Account is locked. Please contact support.",
-      sessionExpired: "Your session has expired. Please login again."
+      sessionExpired: "Your session has expired. Please login again.",
+      citizenLogin: "Worker Login",
+      employeeLogin: "Department Login"
     },
     worker: {
       registration: "Worker Registration",
@@ -290,8 +295,8 @@ export const translations = {
       quickActions: "Quick Actions",
       viewProfile: "View Profile",
       updateDocuments: "Update Documents",
-      fromDate : "From Date",
-      toDate : "To Date",
+      fromDate: "From Date",
+      toDate: "To Date",
       password: "Password"
     },
     establishment: {
@@ -372,7 +377,7 @@ export const translations = {
       viewAttendanceReports: "View attendance reports and analytics",
       viewComplianceStatus: "View compliance status and reports",
       workers: "Workers",
-      toDate : "To Date",
+      toDate: "To Date",
 
     },
     department: {
@@ -481,7 +486,10 @@ export const translations = {
         searchHere: "Search here...",
         typeHere: "Type here...",
         optional: "",
-        required: "(Required)"
+        required: "(Required)",
+        searchAadhaar: "Enter Your Aadhaar",
+        searchCertificate: "Preview AP Seva Certificate",
+        searchStatus: "Service Request Status Check"
       }
     },
     documents: {
@@ -627,9 +635,36 @@ export const translations = {
       troubleshooting: "Troubleshooting",
       support: "Need help? Contact support",
       getStarted: "Get Started",
+    },
+    leaders: {
+      cmName: "Sri Nara Chandrababu Naidu",
+      cmTitle: "Hon'ble Chief Minister",
+      cmGovt: "Government of Andhra Pradesh",
+      officialName: "Sri Nara Lokesh",
+      officialTitle: "Hon'ble Minister for Information Technology, Electronics & Communications, Human Resource Development (HRD), and Real Time Governance (RTG)",
+      officialGovt: "Government of Andhra Pradesh",
+      mainTitle: "AP సేవా పోర్టల్",
+      subTitle: "AP Seva Portal",
+      leaderPhotoPlaceholder: "Leader Photograph (Upload official portrait)",
+      officialPhotoPlaceholder: "Official Photograph (Upload portrait image)",
+      orgLogoPlaceholder: "Organization Logo (Upload official establishment logo)",
+      logoHelperText: "This logo will appear in the header across all pages.",
+      cmAltText: "Official Portrait of {0}",
+      officialAltText: "Official Portrait of {0}",
+      logoAltText: "AP Seva Portal Logo"
+    },
+    dashboard: {
+      welcomeWorker: "Welcome, {0}",
+      todaySubtext: "Attendance and work details for today",
+      welcomeEstSuccess: "Welcome to {0} Dashboard",
+      welcomeEstMissing: "Please upload your establishment logo for better branding.",
+      imageUploadSuccess: "Image uploaded successfully.",
+      invalidFormat: "Please upload a JPG or PNG image.",
+      sizeExceeded: "Image size should be less than 2MB.",
+      imageMissing: "No image uploaded. Default placeholder will be shown."
     }
   },
-    te: {
+  te: {
     common: {
       next: "తరువాత",
       previous: "మునుపటి",
@@ -709,10 +744,13 @@ export const translations = {
       about: "గురించి",
       contact: "సంప్రదించండి",
       menu: "మెనూ",
-      more: "మరిన్ని"
+      more: "మరిన్ని",
+      downloads: "డౌన్‌లోడ్‌లు",
+      citizenSchemes: "సిటిజన్ స్కీమ్స్ పోర్టల్",
+      reportsNav: "నివేదికలు"
     },
     landing: {
-      title: "వర్కర్‌కనెక్ట్",
+      title: "AP సేవా పోర్టల్",
       subtitle: "కార్మికులు, సంస్థలు మరియు విభాగాలను కనెక్ట్ చేస్తోంది",
       description: "నిర్మాణ పరిశ్రమలో కార్మికుల నమోదు, సంస్థ నిర్వహణ మరియు విభాగీయ పర్యవేక్షణ కోసం ఒక సమగ్ర వేదిక.",
       getStarted: "ప్రారంభించండి",
@@ -784,7 +822,9 @@ export const translations = {
       passwordResetSent: "పాస్‌వర్డ్ రీసెట్ లింక్ మీ ఇమెయిల్‌కు పంపబడింది.",
       invalidCredentials: "చెల్లని వినియోగదారు పేరు లేదా పాస్‌వర్డ్",
       accountLocked: "ఖాతా లాక్ చేయబడింది. దయచేసి సహాయం కోసం సంప్రదించండి.",
-      sessionExpired: "మీ సెషన్ గడువు ముగిసింది. దయచేసి మళ్లీ లాగిన్ చేయండి."
+      sessionExpired: "మీ సెషన్ గడువు ముగిసింది. దయచేసి మళ్లీ లాగిన్ చేయండి.",
+      citizenLogin: "వర్కర్ లాగిన్",
+      employeeLogin: "డిపార్ట్‌మెంట్ లాగిన్"
     },
     worker: {
       registration: "కార్మిక నమోదు",
@@ -1109,7 +1149,10 @@ export const translations = {
         searchHere: "ఇక్కడ వెతకండి...",
         typeHere: "ఇక్కడ టైప్ చేయండి...",
         optional: "",
-        required: "(అవసరం)"
+        required: "(అవసరం)",
+        searchAadhaar: "మీ ఆధార్‌ను నమోదు చేయండి",
+        searchCertificate: "AP సేవా సర్టిఫికెట్ ప్రివ్యూ",
+        searchStatus: "సర్వీస్ రిక్వెస్ట్ స్టేటస్ చెక్"
       }
     },
     documents: {
@@ -1255,6 +1298,33 @@ export const translations = {
       troubleshooting: "సమస్య పరిష్కారం",
       support: "సహాయం కావాలా? సపోర్ట్‌ను సంప్రదించండి",
       getStarted: "ప్రారంభించండి"
+    },
+    leaders: {
+      cmName: "శ్రీ నారా చంద్రబాబు నాయుడు",
+      cmTitle: "గౌరవనీయులైన ముఖ్యమంత్రి",
+      cmGovt: "ఆంధ్రప్రదేశ్ ప్రభుత్వం",
+      officialName: "శ్రీ నారా లోకేష్",
+      officialTitle: "గౌరవనీయులైన సమాచార సాంకేతికత, ఎలక్ట్రానిక్స్ & కమ్యూనికేషన్స్, మానవ వనరుల అభివృద్ధి (HRD), మరియు రియల్ టైమ్ గవర్నెన్స్ (RTG) శాఖల మంత్రి",
+      officialGovt: "ఆంధ్రప్రదేశ్ ప్రభుత్వం",
+      mainTitle: "AP సేవా పోర్టల్",
+      subTitle: "AP Seva Portal",
+      leaderPhotoPlaceholder: "నాయకుడి ఫోటోగ్రాఫ్ (అధికారిక పోర్ట్రెయిట్‌ను అప్‌లోడ్ చేయండి)",
+      officialPhotoPlaceholder: "అధికారిక ఫోటోగ్రాఫ్ (పోర్ట్రెయిట్ చిత్రాన్ని అప్‌లోడ్ చేయండి)",
+      orgLogoPlaceholder: "సంస్థ లోగో (అధికారిక స్థాపన లోగోను అప్‌లోడ్ చేయండి)",
+      logoHelperText: "ఈ లోగో అన్ని పేజీలలో హెడర్‌లో కనిపిస్తుంది.",
+      cmAltText: "{0} అధికారిక చిత్రం",
+      officialAltText: "{0} అధికారిక చిత్రం",
+      logoAltText: "AP సేవా పోర్టల్ లోగో"
+    },
+    dashboard: {
+      welcomeWorker: "స్వాగతం, {0}",
+      todaySubtext: "ఈ రోజు హాజరు మరియు పని వివరాలు",
+      welcomeEstSuccess: "{0} డాష్‌బోర్డ్‌కు స్వాగతం",
+      welcomeEstMissing: "మెరుగైన బ్రాండింగ్ కోసం దయచేసి మీ సంస్థ లోగోను అప్‌లోడ్ చేయండి.",
+      imageUploadSuccess: "చిత్రం విజయవంతంగా అప్‌లోడ్ చేయబడింది.",
+      invalidFormat: "దయచేసి JPG లేదా PNG చిత్రాన్ని అప్‌లోడ్ చేయండి.",
+      sizeExceeded: "చిత్రం పరిమాణం 2MB కంటే తక్కువ ఉండాలి.",
+      imageMissing: "చిత్రం అప్‌లోడ్ చేయబడలేదు. డిఫాల్ట్ ప్లేస్‌హోల్డర్ చూపబడుతుంది."
     }
   }
 };

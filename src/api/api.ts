@@ -94,7 +94,7 @@ export const fetchAuthUser = async () => {
 
 export const logoutUser = async () => {
   // Call backend to clear session
-  await api("/logout", "GET"); // Assuming GET /logout clears cookie
+  return await api("/logout", "GET");
 };
 
 // === DYNAMIC WORKER DASHBOARD ===
@@ -108,23 +108,29 @@ export interface WorkerDashboardDetails {
   };
   establishment: {
     id: number;
+    estmtWorkerId: number;
     name: string;
     workLocation: string;
-  };
+  } | null;
   attendance: {
     lastCheckIn: string | null;
     lastCheckOut: string | null;
     status: 'checked-in' | 'checked-out' | 'none';
     currentAttendanceId?: number;
   };
+  stats: {
+    present: number;
+    absent: number;
+    incomplete: number;
+  };
 }
 
 export const getWorkerDashboardDetails = async () => {
-  return api<{ data: WorkerDashboardDetails }>("/api/worker/details", "GET").then(res => res.data);
+  return api<{ data: WorkerDashboardDetails }>("/worker/details", "GET").then(res => res.data);
 };
 
-export const getLatestAttendance = async () => {
-  return api<{ data: any }>("/api/attendance/latest", "GET").then(res => res.data);
+export const getWorkerAttendanceHistory = async (workerId: number) => {
+  return api<{ data: any[] }>(`/attendance/worker/${workerId}`, "GET").then(res => res.data);
 };
 
 // Re-using checkInOrOut but ensuring it matches new requirements if any
@@ -231,6 +237,7 @@ interface WorkerLoginResponse {
   id: number;
   type: string;
   token: string;
+  attendanceMessage?: string;
 }
 
 export const loginWorker = async (payload: loginPayload): Promise<WorkerLoginResponse> => {

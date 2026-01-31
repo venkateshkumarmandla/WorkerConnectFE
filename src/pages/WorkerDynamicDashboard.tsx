@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getWorkerDashboardDetails, checkInOrOut } from '../api/api';
+import { getWorkerDashboardDetails, checkInOrOut, logoutUser } from '../api/api';
 import { useCardReader } from '../hooks/useCardReader';
 import { LogOut, MapPin, Clock, User as UserIcon, Building, ScanLine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -65,10 +65,19 @@ const WorkerDynamicDashboard: React.FC = () => {
     }, []);
 
     const handleLogout = async () => {
-        // Call backend logout
-        // Then clear local session
-        logout();
-        navigate('/login/card');
+        try {
+            // Call backend logout which records attendance
+            const response: any = await logoutUser();
+            const msg = response?.attendanceMessage || "Logout successful";
+
+            // Clear local session
+            logout();
+            navigate('/login/worker', { state: { message: msg } });
+        } catch (error) {
+            console.error("Logout error", error);
+            logout();
+            navigate('/login/worker');
+        }
     };
 
     const handleCardScan = async (scannedId: string) => {

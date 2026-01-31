@@ -7,33 +7,35 @@ import { registerServiceWorker, requestNotificationPermission } from './utils/pw
 import { initializeCapacitorPlugins } from './utils/capacitor-plugins';
 
 // Add error handling for initialization
+// Add error handling for initialization
 const initApp = async () => {
   try {
-    // Only register service worker for PWA functionality in web context
+    // Render the app IMMEDIATELY to show UI
+    const rootElement = document.getElementById('root');
+    if (!rootElement) throw new Error('Root element not found');
+
+    createRoot(rootElement).render(
+      <StrictMode>
+        <App />
+      </StrictMode>
+    );
+
+    // Then initialize plugins in background
     if (!Capacitor.isNativePlatform()) {
       await registerServiceWorker();
     } else {
       // Initialize Capacitor plugins for native platforms
-      await initializeCapacitorPlugins();
+      // Don't await here to block anything else, just let it run
+      initializeCapacitorPlugins().catch(err => console.warn('Plugin init failed:', err));
     }
 
-    // Request notification permission
-    await requestNotificationPermission();
+    // Request notification permission in background
+    requestNotificationPermission().catch(err => console.warn('Notification permission failed:', err));
 
-    // Render the app
-    createRoot(document.getElementById('root')!).render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
   } catch (error) {
     console.error('Error initializing app:', error);
-    // Render the app anyway to avoid blank screen
-    createRoot(document.getElementById('root')!).render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
+    // Even if initial render failed above (unlikely unless root missing), try again if needed
+    // but usually the first render attempt is enough. 
   }
 };
 

@@ -46,6 +46,7 @@ export interface WorkerUser {
   establishmentName: string;
   workLocation: string;
   status: string;
+  attendanceMessage?: string | null;
 
   // Profile Fields
   aadhaarNumber?: string;
@@ -88,6 +89,7 @@ export interface EstablishmentUser {
   emailId: string;
   contactPerson: string;
   lastLoggedIn?: string | null;
+  logoUrl?: string | null;
 }
 
 // Department login response
@@ -163,6 +165,7 @@ export function mapWorkerToUser(data: any): WorkerUser {
     establishmentName: data.establishmentName,
     workLocation: data.workLocation,
     status: data.status,
+    attendanceMessage: data.attendanceMessage,
   };
 }
 
@@ -176,6 +179,7 @@ export function mapEstablishmentToUser(data: any): EstablishmentUser {
     mobileNumber: data.mobileNumber,
     contactPerson: data.contactPerson,
     lastLoggedIn: data.lastLoggedIn,
+    logoUrl: data.logoUrl || null,
   };
 }
 
