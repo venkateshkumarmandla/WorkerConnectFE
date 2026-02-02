@@ -42,6 +42,8 @@ import WorkerDynamicDashboard from './pages/WorkerDynamicDashboard';
 import Logout from './pages/Logout';
 import { LoaderProvider } from './contexts/LoaderContext';
 import DashboardAuthGuard from './components/DashboardAuthGuard';
+import EstablishmentDepartmentDashboard from './pages/EstablishmentDepartmentDashboard';
+import DepartmentWorkersView from './pages/DepartmentWorkersView';
 
 function App() {
   return (
@@ -119,6 +121,20 @@ function App() {
                     <ProtectedRoute userType="establishment">
                       <DashboardAuthGuard allowedRole="establishment">
                         <WorkerManagement />
+                      </DashboardAuthGuard>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/establishment/departments" element={
+                    <ProtectedRoute userType="establishment">
+                      <DashboardAuthGuard allowedRole="establishment">
+                        <EstablishmentDepartmentDashboard />
+                      </DashboardAuthGuard>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/department/:departmentName/workers" element={
+                    <ProtectedRoute userType="establishment">
+                      <DashboardAuthGuard allowedRole="establishment">
+                        <DepartmentWorkersView />
                       </DashboardAuthGuard>
                     </ProtectedRoute>
                   } />

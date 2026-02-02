@@ -38,5 +38,20 @@ export const establishmentApi = {
             presentCount,
             absentCount
         };
+    },
+
+    // Get department-wise statistics for establishment
+    getDepartmentStats: async (establishmentId: number, date?: string): Promise<any> => {
+        const params = date ? `?date=${date}` : '';
+        const res = await api<{ data: any }>(`/attendance/establishment/${establishmentId}/department-stats${params}`, 'GET');
+        return res.data;
+    },
+
+    // Get workers in a specific department with attendance
+    getDepartmentWorkers: async (departmentName: string, establishmentId: number, date?: string): Promise<any> => {
+        const params = new URLSearchParams({ establishmentId: establishmentId.toString() });
+        if (date) params.append('date', date);
+        const res = await api<{ data: any }>(`/attendance/department/${departmentName}/workers?${params}`, 'GET');
+        return res.data;
     }
 };

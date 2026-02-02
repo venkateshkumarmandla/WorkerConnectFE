@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { User, Edit3, Save, X, Phone, Mail, MapPin, Briefcase, Calendar, FileText, Camera } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { User, Edit3, Save, X, Phone, Mail, MapPin, Briefcase, Calendar, FileText, Camera, Loader } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth, WorkerUser } from '../contexts/AuthContext';
 import FormInput from '../components/FormInput';
 import FormSelect from '../components/FormSelect';
 import { DISTRICTS, TRADES_OF_WORK, WORKER_CATEGORIES } from '../utils/constants';
+import { getWorkerProfile } from '../api/api';
 
 const WorkerProfile: React.FC = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const worker = user as WorkerUser | undefined;
 
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Initialize with Auth Data or Fallback
   const [profileData, setProfileData] = useState({
@@ -64,42 +69,88 @@ const WorkerProfile: React.FC = () => {
 
   });
 
-  // Sync state with User Context when it loads
+  // Fetch worker profile from API
   useEffect(() => {
-    if (worker) {
-      console.log('👤 Profile Page: Syncing user data to state', worker);
-      setProfileData(prev => ({
-        ...prev,
-        firstName: worker.firstName || '',
-        middleName: worker.middleName || '',
-        lastName: worker.lastName || '',
-        gender: worker.gender || '',
-        dateOfBirth: worker.dateOfBirth || '',
-        age: worker.age?.toString() || '',
-        maritalStatus: worker.maritalStatus || '',
-        caste: worker.caste || '',
-        subCaste: worker.subCaste || '',
+    const fetchProfile = async () => {
+      const workerId = (worker?.id || user?.id);
+      if (!workerId) {
+        setError('User not authenticated');
+        setLoading(false);
+        return;
+      }
 
-        mobileNumber: worker.mobileNumber?.toString() || '',
-        emailAddress: worker.emailId || '',
+      try {
+        setLoading(true);
+        setError(null);
 
-        presentAddress: {
-          doorNumber: worker.presentAddress?.doorNumber || '',
-          street: worker.presentAddress?.street || '',
-          district: worker.presentAddress?.district || '',
-          mandal: '',
-          village: '',
-          pincode: worker.presentAddress?.pincode?.toString() || ''
-        },
+        console.log('👤 Fetching worker profile for ID:', workerId);
+        const response: any = await getWorkerProfile(workerId);
 
-        employerName: worker.establishmentName || '',
+        console.log('✅ Profile response received:', response);
 
-        aadhaarNumber: worker.aadhaarNumber || '',
-        eSharmId: worker.eSharmId || '',
-        boCWId: worker.boCwId || ''
-      }));
-    }
-  }, [worker]);
+        const profileData = response.data;
+
+        // Map API response to profile state
+        if (profileData) {
+          setProfileData({
+            // Personal Information
+            firstName: profileData.first_name || '',
+            middleName: profileData.middle_name || '',
+            lastName: profileData.last_name || '',
+            gender: profileData.gender || '',
+            dateOfBirth: profileData.date_of_birth || '',
+            age: profileData.age?.toString() || '',
+            maritalStatus: profileData.marital_status || '',
+            fatherHusbandName: profileData.relative_name || '',
+            caste: profileData.caste || '',
+            subCaste: profileData.sub_caste || '',
+
+            // Contact Information
+            mobileNumber: profileData.mobile_number?.toString() || '',
+            alternateNumber: '',
+            emailAddress: profileData.email_id || '',
+
+            // Address Information
+            presentAddress: {
+              doorNumber: profileData.pre_door_number || '',
+              street: profileData.pre_street || '',
+              district: '', // Map from district_id if needed
+              mandal: '',
+              village: '',
+              pincode: profileData.pre_pincode?.toString() || ''
+            },
+
+            // Work Information
+            employerName: profileData.establishment_name || '',
+            constructionOrg: '',
+            tradeOfWork: profileData.trade_of_work || '',
+            workerCategory: profileData.category || '',
+            workExperience: '',
+
+            // Registration Information
+            registrationId: profileData.worker_id?.toString() || '',
+            registrationDate: '',
+            aadhaarNumber: profileData.aadhaar_number || '',
+            eSharmId: profileData.e_sharm_id || '',
+            boCWId: profileData.bo_cw_id || '',
+
+            // Bank Information
+            accountNumber: '',
+            bankName: '',
+            ifscCode: '',
+            branchName: ''
+          });
+        }
+      } catch (err) {
+        console.error('❌ Error fetching profile:', err);
+        setError('Failed to load profile data. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [user]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -168,6 +219,35 @@ const WorkerProfile: React.FC = () => {
       <span className="text-gray-900 font-medium text-sm">{value || 'Not provided'}</span>
     </div>
   );
+
+  if (loading) {
+    return (
+      <div className="min-h-screen py-8 mobile-nav-spacing flex items-center justify-center">
+        <div className="text-center">
+          <Loader className="h-8 w-8 text-blue-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen py-8 mobile-nav-spacing flex items-center justify-center">
+        <div className="text-center card-mobile p-8 max-w-md mx-4">
+          <X className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Profile</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+          >
+            Reload Page
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
@@ -463,11 +543,17 @@ const WorkerProfile: React.FC = () => {
         <div className="card-mobile mt-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
           <div className="grid md:grid-cols-3 gap-4">
-            <button className="flex items-center justify-center px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+            <button
+              onClick={() => navigate('/documents')}
+              className="flex items-center justify-center px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+            >
               <FileText className="h-5 w-5 mr-2" />
               View Documents
             </button>
-            <button className="flex items-center justify-center px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+            <button
+              onClick={() => navigate('/attendance/history')}
+              className="flex items-center justify-center px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+            >
               <Calendar className="h-5 w-5 mr-2" />
               Attendance History
             </button>

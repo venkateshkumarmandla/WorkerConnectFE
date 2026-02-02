@@ -28,33 +28,48 @@ const AttendanceHistory: React.FC = () => {
   // Fetch attendance records from API
   useEffect(() => {
     const fetchAttendance = async () => {
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
-        
+
         // Calculate date range for current month
         const startDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).toISOString();
         const endDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).toISOString();
-        
+
         let endpoint = '';
+        let workerId: number | undefined;
+
         if (user.type === 'worker') {
-          endpoint = `/attendance/worker/${user.id}?startDate=${startDate}&endDate=${endDate}`;
+          // For worker, try to get ID from different possible locations
+          workerId = (user as any).id || (user as any).workerId;
+          if (!workerId) {
+            console.warn('⚠️  Worker ID not found in user object');
+            setAttendanceRecords([]);
+            setLoading(false);
+            return;
+          }
+          endpoint = `/attendance/worker/${workerId}?startDate=${startDate}&endDate=${endDate}`;
         } else if (user.type === 'establishment') {
-          endpoint = `/attendance/establishment/${user.establishmentId}?startDate=${startDate}&endDate=${endDate}`;
+          const establishmentId = (user as any).establishmentId;
+          endpoint = `/attendance/establishment/${establishmentId}?startDate=${startDate}&endDate=${endDate}`;
         } else {
           // Department - show all attendance
           endpoint = `/attendance/current`;
         }
 
+        console.log('📅 Fetching attendance from:', endpoint);
         const response = await api(endpoint, 'GET');
-        
+
         // Map API response to component interface
         const mapped = (response.data || []).map((record: any) => {
           const checkIn = record.check_in_date_time ? new Date(record.check_in_date_time) : undefined;
           const checkOut = record.check_out_date_time ? new Date(record.check_out_date_time) : undefined;
-          const workHours = (checkIn && checkOut) 
-            ? (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60) 
+          const workHours = (checkIn && checkOut)
+            ? (checkOut.getTime() - checkIn.getTime()) / (1000 * 60 * 60)
             : undefined;
 
           return {
@@ -120,8 +135,8 @@ const AttendanceHistory: React.FC = () => {
     }
   };
 
-  const filteredRecords = selectedStatus === 'all' 
-    ? attendanceRecords 
+  const filteredRecords = selectedStatus === 'all'
+    ? attendanceRecords
     : attendanceRecords.filter(record => record.status === selectedStatus);
 
   const getMonthStats = () => {
@@ -220,11 +235,11 @@ const AttendanceHistory: React.FC = () => {
               <ChevronLeft className="h-5 w-5 mr-1" />
               Previous
             </button>
-            
+
             <h2 className="text-xl font-semibold text-gray-900">
               {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
             </h2>
-            
+
             <button
               onClick={() => navigateMonth('next')}
               disabled={currentMonth.getMonth() === new Date().getMonth() && currentMonth.getFullYear() === new Date().getFullYear()}
@@ -282,7 +297,7 @@ const AttendanceHistory: React.FC = () => {
                 <option value="leave">Leave</option>
               </select>
             </div>
-            
+
             <button
               onClick={exportData}
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -298,7 +313,7 @@ const AttendanceHistory: React.FC = () => {
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Daily Records ({filteredRecords.length} entries)
           </h3>
-          
+
           {loading ? (
             <div className="text-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
@@ -323,7 +338,7 @@ const AttendanceHistory: React.FC = () => {
                         </span>
                       </div>
                     </div>
-                    
+
                     {record.workHours && (
                       <div className="text-right">
                         <p className="text-sm font-medium text-gray-900">
@@ -337,7 +352,7 @@ const AttendanceHistory: React.FC = () => {
                       </div>
                     )}
                   </div>
-                  
+
                   {(record.checkInTime || record.checkOutTime) && (
                     <div className="grid md:grid-cols-2 gap-4 mt-3 pt-3 border-t border-gray-100">
                       {record.checkInTime && (
@@ -356,7 +371,7 @@ const AttendanceHistory: React.FC = () => {
                           </div>
                         </div>
                       )}
-                      
+
                       {record.checkOutTime && (
                         <div className="flex items-center space-x-2">
                           <Clock className="h-4 w-4 text-red-600" />
@@ -375,7 +390,7 @@ const AttendanceHistory: React.FC = () => {
                       )}
                     </div>
                   )}
-                  
+
                   {record.notes && (
                     <div className="mt-3 pt-3 border-t border-gray-100">
                       <p className="text-sm text-gray-600">

@@ -4,8 +4,10 @@ import { Capacitor } from '@capacitor/core';
 console.log('🔌 [Config] Platform:', Capacitor.getPlatform());
 console.log('📱 [Config] Is Native:', Capacitor.isNativePlatform());
 
-const USE_LOCAL_IP = false;
-const LOCAL_IP_ADDRESS = "192.168.200.162"; // Your local IP
+const USE_LOCAL_IP = true;
+// const LOCAL_IP_ADDRESS = "192.168.200.162"; // Your local IP
+const LOCAL_IP_ADDRESS = "localhost"; // Your local IP
+
 
 function getBaseUrl(): string {
   if (USE_LOCAL_IP) {

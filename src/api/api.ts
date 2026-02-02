@@ -133,6 +133,15 @@ export const getWorkerAttendanceHistory = async (workerId: number) => {
   return api<{ data: any[] }>(`/attendance/worker/${workerId}`, "GET").then(res => res.data);
 };
 
+// New enhanced attendance APIs
+export const getWorkerMonthlySummary = async (workerId: number, month?: number, year?: number) => {
+  const params = new URLSearchParams();
+  if (month) params.append('month', month.toString());
+  if (year) params.append('year', year.toString());
+  const queryString = params.toString();
+  return api<{ data: any }>(`/attendance/worker/${workerId}/monthly-summary${queryString ? '?' + queryString : ''}`, "GET").then(res => res.data);
+};
+
 // Re-using checkInOrOut but ensuring it matches new requirements if any
 
 
@@ -418,7 +427,7 @@ export interface CheckInOutResponse {
 
 export const checkInOrOut = async (payload: CheckInOutPayload) => {
   return await api<CheckInOutResponse>(
-    "/worker/checkinorout",
+    "/attendance/checkinorout",
     "POST",
     payload
   );
