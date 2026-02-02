@@ -55,7 +55,7 @@ const EstablishmentManagement: React.FC = () => {
         const response = await api('/department/establishments', 'GET');
 
         // Map API response to component interface
-        const mapped = (response.data || []).map((est: any) => ({
+        const mapped = ((response as any).data || []).map((est: any) => ({
           id: est.establishment_id?.toString() || '',
           name: est.establishment_name || '',
           registrationId: `EST${est.establishment_id}`,
@@ -224,10 +224,10 @@ const EstablishmentManagement: React.FC = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                Establishment Management
+                {t('department.establishmentManagement')}
               </h1>
               <p className="text-gray-600">
-                Manage and monitor all registered establishments
+                {t('department.establishmentStats')}
               </p>
             </div>
             <button className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
@@ -241,15 +241,15 @@ const EstablishmentManagement: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-orange-600">{stats.total}</div>
-            <div className="text-sm text-gray-600">Total</div>
+            <div className="text-sm text-gray-600">{t('common.total')}</div>
           </div>
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-            <div className="text-sm text-gray-600">Active</div>
+            <div className="text-sm text-gray-600">{t('common.active')}</div>
           </div>
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-yellow-600">{stats.pending}</div>
-            <div className="text-sm text-gray-600">Pending</div>
+            <div className="text-sm text-gray-600">{t('common.pending')}</div>
           </div>
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-blue-600">{stats.totalWorkers}</div>
@@ -377,13 +377,13 @@ const EstablishmentManagement: React.FC = () => {
                         className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                       />
                     </th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">Establishment</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">Category & Work</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">Status</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">Location</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">Project Details</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">Compliance</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">Actions</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">{t('establishment.establishment')}</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">{t('establishment.registrationNumber')}</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">{t('common.status')}</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">{t('worker.addressDetails')}</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">{t('establishment.projectDetails')}</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">{t('department.complianceMonitoring')}</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">{t('common.view')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -438,7 +438,7 @@ const EstablishmentManagement: React.FC = () => {
                       <td className="py-3 px-4">
                         <div className="text-center">
                           <div className={`text-sm font-medium ${getComplianceScore(establishment.compliance) >= 80 ? 'text-green-600' :
-                              getComplianceScore(establishment.compliance) >= 60 ? 'text-yellow-600' : 'text-red-600'
+                            getComplianceScore(establishment.compliance) >= 60 ? 'text-yellow-600' : 'text-red-600'
                             }`}>
                             {getComplianceScore(establishment.compliance)}%
                           </div>

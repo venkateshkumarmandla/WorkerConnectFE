@@ -97,7 +97,7 @@ const LocationCheckIn: React.FC<LocationCheckInProps> = ({
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      hour12: false
     });
   };
 
@@ -135,7 +135,7 @@ const LocationCheckIn: React.FC<LocationCheckInProps> = ({
             {new Date().toLocaleTimeString('en-US', {
               hour: '2-digit',
               minute: '2-digit',
-              hour12: true
+              hour12: false
             })}
           </span>
         </div>
@@ -150,7 +150,7 @@ const LocationCheckIn: React.FC<LocationCheckInProps> = ({
           </span>
           {loading && <Loader className="h-4 w-4 animate-spin text-blue-500" />}
         </div>
-        
+
         {/* <div className={`flex items-center space-x-2 p-3 rounded-lg ${
           locationStatus === 'allowed' ? 'bg-green-50 border border-green-200' :
           locationStatus === 'restricted' ? 'bg-red-50 border border-red-200' :
@@ -235,16 +235,15 @@ const LocationCheckIn: React.FC<LocationCheckInProps> = ({
           <button
             onClick={handleCheckIn}
             disabled={
-              isProcessing || 
-              loading || 
-              !isLocationEnabled || 
+              isProcessing ||
+              loading ||
+              !isLocationEnabled ||
               (workLocation && locationStatus === 'restricted')
             }
-            className={`w-full btn-mobile font-semibold ${
-              workLocation && locationStatus === 'restricted'
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-green-600 text-white hover:bg-green-700'
-            }`}
+            className={`w-full btn-mobile font-semibold ${workLocation && locationStatus === 'restricted'
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-green-600 text-white hover:bg-green-700'
+              }`}
           >
             {isProcessing ? (
               <div className="flex items-center justify-center">

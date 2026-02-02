@@ -1,27 +1,27 @@
 import React from "react";
 import { format } from "date-fns";
 
+import { Clock } from "lucide-react";
+
 interface LastLoggedInProps {
-  time?: string | Date | null; // optional, can be string or Date
-  formatStr?: string;   // optional, default format
+  time?: string | Date | null;
+  formatStr?: string;
 }
 
-const LastLoggedIn: React.FC<LastLoggedInProps> = ({ time, formatStr = "dd MMM yyyy, h:mm a" }) => {
-  if (!time) {
-    return (
-      <div className="text-gray-600">
-        <h2 className="font-semibold text-gray-800">Last Logged In</h2>
-        <p>Never Logged In</p>
-      </div>
-    );
-  }
-
-  const dateToFormat = new Date(time);
+const LastLoggedIn: React.FC<LastLoggedInProps> = ({ time, formatStr = "dd MMM yyyy, HH:mm" }) => {
+  const displayTime = time ? format(new Date(time), formatStr) : "Never Logged In";
 
   return (
-    <div className="text-gray-600">
-      <h2 className="font-semibold text-gray-800">Last Logged In</h2>
-      <p>{format(dateToFormat, formatStr)}</p>
+    <div className="flex items-center space-x-2">
+      <div className="p-2 bg-blue-100 rounded-lg">
+        <Clock className="h-5 w-5 text-blue-600" />
+      </div>
+      <div>
+        <p className="text-xs text-gray-500 font-medium">Last Logged In</p>
+        <p className="text-sm lg:text-base font-bold text-gray-900 whitespace-nowrap">
+          {displayTime}
+        </p>
+      </div>
     </div>
   );
 };

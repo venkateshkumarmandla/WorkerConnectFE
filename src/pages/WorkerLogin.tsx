@@ -234,44 +234,40 @@ const WorkerLogin: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <div className="space-y-4">
-              <div className="relative">
-                <Phone className="absolute left-3 top-10 h-5 w-5 text-gray-400" />
-                <FormInput
-                  label={t('worker.mobileNumber')}
-                  type="tel"
-                  value={formData.mobileNumber}
-                  onChange={(value) => setFormData(prev => ({ ...prev, mobileNumber: value }))}
-                  placeholder={t('forms.placeholders.enterMobile')}
-                  required
-                  maxLength={10}
-                  pattern="[0-9]*"
-                  error={errors.mobile}
-                  className="pl-10"
-                  autoComplete='new-tel'
-                />
-              </div>
+              <FormInput
+                label={t('worker.mobileNumber')}
+                type="tel"
+                value={formData.mobileNumber}
+                onChange={(value) => setFormData(prev => ({ ...prev, mobileNumber: value }))}
+                placeholder={t('forms.placeholders.enterMobile')}
+                required
+                maxLength={10}
+                pattern="[0-9]*"
+                error={errors.mobile}
+                autoComplete='new-tel'
+                leftIcon={<Phone className="h-5 w-5" />}
+              />
 
-              <div className="relative">
-                <Lock className="absolute left-3 top-10 h-5 w-5 text-gray-400" />
-                <FormInput
-                  label={t('auth.password')}
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(value) => setFormData(prev => ({ ...prev, password: value }))}
-                  placeholder={t('auth.password')}
-                  required
-                  error={errors.password}
-                  className="pl-10 pr-10"
-                  autoComplete='new-password'
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-10 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
+              <FormInput
+                label={t('auth.password')}
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={(value) => setFormData(prev => ({ ...prev, password: value }))}
+                placeholder={t('auth.password')}
+                required
+                error={errors.password}
+                autoComplete='new-password'
+                leftIcon={<Lock className="h-5 w-5" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                }
+              />
             </div>
 
             <div className="flex items-center justify-between mt-6">

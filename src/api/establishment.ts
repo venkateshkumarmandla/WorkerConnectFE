@@ -1,10 +1,10 @@
 import { api } from './api';
-import { DUMMY_ESTABLISHMENT_DASHBOARD, DUMMY_DEPARTMENT_WISE_STATS } from './dummyData';
+import { DUMMY_ESTABLISHMENT_DASHBOARD, DUMMY_DEPARTMENT_WISE_STATS, DUMMY_WORKERS_BY_ESTABLISHMENT, DUMMY_ESTABLISHMENTS } from './dummyData';
 
 export interface WorkerSummary {
     workerId: number;
     fullName: string;
-    status: 'Present' | 'Not Present';
+    status: 'Present' | 'Not Present' | 'Checked Out';
     checkInTime?: string;
     checkOutTime?: string;
 }
@@ -13,7 +13,10 @@ export interface EstablishmentDashboardData {
     workers: WorkerSummary[];
     totalWorkers: number;
     presentCount: number;
+    presentNow?: number;
     absentCount: number;
+    totalCheckIns: number;
+    totalCheckOuts: number;
 }
 
 export const establishmentApi = {
@@ -24,7 +27,13 @@ export const establishmentApi = {
                 ? `/establishment/workerdetails?establishmentId=${establishmentId}`
                 : '/establishment/workers';
             const res = await api<{ data: WorkerSummary[] }>(url, 'GET');
-            return res.data && res.data.length > 0 ? res.data : DUMMY_ESTABLISHMENT_DASHBOARD.workers;
+            if (res.data && res.data.length > 0) return res.data;
+
+            if (establishmentId && DUMMY_WORKERS_BY_ESTABLISHMENT[establishmentId]) {
+                return DUMMY_WORKERS_BY_ESTABLISHMENT[establishmentId];
+            }
+
+            return DUMMY_ESTABLISHMENT_DASHBOARD.workers;
         } catch (error) {
             console.error("Failed to fetch establishment workers, returning dummy data:", error);
             return DUMMY_ESTABLISHMENT_DASHBOARD.workers;
@@ -33,19 +42,29 @@ export const establishmentApi = {
 
     // Get aggregated dashboard data if available, or we compute from workers
     getDashboardData: async (establishmentId?: number): Promise<EstablishmentDashboardData> => {
-        // This might be a composite call or handled by the component
         const workers = await establishmentApi.getWorkers(establishmentId);
 
-        // Calculate stats on client or fetch if backend provides
-        const totalWorkers = workers.length;
-        const presentCount = workers.filter(w => w.status === 'Present').length;
+        // Try to find summary data for consistency
+        const summary = establishmentId
+            ? DUMMY_ESTABLISHMENTS.find(e => e.establishmentId === establishmentId)
+            : null;
+
+        // Use summary counts if available, otherwise calculate from workers
+        const totalWorkers = summary ? summary.totalWorkers : workers.length;
+        const presentCount = summary ? summary.presentNow : workers.filter(w => w.status === 'Present').length;
         const absentCount = totalWorkers - presentCount;
+
+        const totalCheckOuts = summary ? (summary.checkedOutList?.length || 0) : workers.filter(w => w.checkOutTime).length;
+        const totalCheckIns = summary ? (summary.presentNow + totalCheckOuts) : workers.filter(w => w.checkInTime).length;
 
         return {
             workers,
             totalWorkers,
             presentCount,
-            absentCount
+            presentNow: summary ? summary.presentNow : presentCount,
+            absentCount,
+            totalCheckIns,
+            totalCheckOuts
         };
     },
 

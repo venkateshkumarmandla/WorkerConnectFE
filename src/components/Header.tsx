@@ -83,7 +83,7 @@ const Header: React.FC = () => {
                 AP Worker Connect
               </span>
               <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">
-                Construction Sector
+                {t('navigation.constructionSector')}
               </span>
             </div>
           </Link>

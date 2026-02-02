@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Calendar, Settings, Loader, CheckCircle, XCircle, AlertCircle, TrendingUp, BarChart3, ArrowLeft } from 'lucide-react';
+import { User, Calendar, Settings, Loader, CheckCircle, XCircle, AlertCircle, TrendingUp, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -205,13 +205,6 @@ const WorkerDashboard: React.FC = () => {
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          {t('common.back') || 'Back'}
-        </button>
         {/* Header */}
         <div className="mb-8 flex justify-between items-center bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center space-x-4">
@@ -248,14 +241,14 @@ const WorkerDashboard: React.FC = () => {
               <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                 <p className="text-xs text-blue-600 font-semibold mb-1 uppercase tracking-wider">Last Login</p>
                 <p className="font-bold text-gray-800 text-lg">
-                  {lastCheckInTime ? new Date(lastCheckInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                  {lastCheckInTime ? new Date(lastCheckInTime).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' }) : '--:--'}
                 </p>
               </div>
 
               <div className="p-3 bg-orange-50 rounded-lg border border-orange-100">
                 <p className="text-xs text-orange-600 font-semibold mb-1 uppercase tracking-wider">Last Logout</p>
                 <p className="font-bold text-gray-800 text-lg">
-                  {lastCheckOutTime ? new Date(lastCheckOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                  {lastCheckOutTime ? new Date(lastCheckOutTime).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' }) : '--:--'}
                 </p>
               </div>
             </div>
@@ -451,13 +444,15 @@ const WorkerDashboard: React.FC = () => {
                 </div>
                 <div className="text-right text-sm text-gray-600">
                   {record.checkInTime && (
-                    <div>In: {record.checkInTime.toLocaleTimeString('en-US', {
+                    <div>In: {record.checkInTime.toLocaleTimeString([], {
+                      hour12: false,
                       hour: '2-digit',
                       minute: '2-digit'
                     })}</div>
                   )}
                   {record.checkOutTime && (
-                    <div>Out: {record.checkOutTime.toLocaleTimeString('en-US', {
+                    <div>Out: {record.checkOutTime.toLocaleTimeString([], {
+                      hour12: false,
                       hour: '2-digit',
                       minute: '2-digit'
                     })}</div>

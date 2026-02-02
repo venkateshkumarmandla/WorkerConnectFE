@@ -65,7 +65,11 @@ export const translations = {
       as: "as",
       or: "or",
       date: "Date",
-      status: "Status"
+      status: "Status",
+      total: "Total",
+      present: "Present",
+      absent: "Absent",
+      checkedOut: "Checked Out"
     },
     navigation: {
       home: "Home",
@@ -82,7 +86,8 @@ export const translations = {
       more: "More",
       downloads: "Downloads",
       citizenSchemes: "Citizen Schemes Portal",
-      reportsNav: "Reports"
+      reportsNav: "Reports",
+      constructionSector: "Construction Sector"
     },
     landing: {
       title: "AP WorkerConnect",
@@ -297,7 +302,11 @@ export const translations = {
       updateDocuments: "Update Documents",
       fromDate: "From Date",
       toDate: "To Date",
-      password: "Password"
+      password: "Password",
+      liveActivity: "Live Activity",
+      duration: "Duration",
+      updated: "Updated",
+      noActivityToday: "No activity recorded today yet."
     },
     establishment: {
       registration: "Establishment Registration",
@@ -378,6 +387,7 @@ export const translations = {
       viewComplianceStatus: "View compliance status and reports",
       workers: "Workers",
       toDate: "To Date",
+      avgAttendance: "Avg Attendance"
 
     },
     department: {
@@ -392,6 +402,8 @@ export const translations = {
       loggedOut: "Logged Out",
       present: "Present",
       absent: "Absent",
+      workersPresent: "Present Today",
+      workersAbsent: "Absent",
       newRegistrations: "New Registrations",
       pendingApprovals: "Pending Approvals",
       verifiedDocuments: "Verified Documents",
@@ -730,7 +742,11 @@ export const translations = {
       as: "గా",
       or: "లేదా",
       date: "తేదీ",
-      status: "స్థితి"
+      status: "స్థితి",
+      total: "మొత్తం",
+      present: "హాజరు",
+      absent: "గైర్హాజరు",
+      checkedOut: "చెక్ అవుట్"
     },
     navigation: {
       home: "హోమ్",
@@ -747,7 +763,8 @@ export const translations = {
       more: "మరిన్ని",
       downloads: "డౌన్‌లోడ్‌లు",
       citizenSchemes: "సిటిజన్ స్కీమ్స్ పోర్టల్",
-      reportsNav: "నివేదికలు"
+      reportsNav: "నివేదికలు",
+      constructionSector: "నిర్మాణ రంగం"
     },
     landing: {
       title: "AP సేవా పోర్టల్",
@@ -961,7 +978,11 @@ export const translations = {
       viewProfile: "ప్రొఫైల్ చూడండి",
       updateDocuments: "డాక్యుమెంట్లను నవీకరించండి",
       fromDate: "నుండి తేదీ",
-      toDate: "వరకు తేదీ"
+      toDate: "వరకు తేదీ",
+      liveActivity: "ఈరోజు లైవ్ యాక్టివిటీ",
+      duration: "వ్యవధి",
+      updated: "నవీకరించబడింది",
+      noActivityToday: "ఈరోజు ఎటువంటి యాక్టివిటీ నమోదు కాలేదు."
     },
     establishment: {
       registration: "సంస్థ నమోదు",
@@ -1041,7 +1062,8 @@ export const translations = {
       viewAttendanceReports: "హాజరు నివేదికలు మరియు విశ్లేషణలను చూడండి",
       viewComplianceStatus: "నియమానుసరణ స్థితిని మరియు నివేదికలను చూడండి",
       workers: "కార్మికులు",
-      toDate: "వరకు తేదీ"
+      toDate: "వరకు తేదీ",
+      avgAttendance: "సగటు హాజరు"
     },
     department: {
       login: "విభాగ లాగిన్",
@@ -1055,6 +1077,8 @@ export const translations = {
       loggedOut: "లాగౌట్ అయ్యారు",
       present: "హాజరు",
       absent: "గైర్హాజరు",
+      workersPresent: "ఈరోజు హాజరు",
+      workersAbsent: "గైర్హాజరు",
       newRegistrations: "కొత్త నమోదులు",
       pendingApprovals: "పెండింగ్ ఆమోదాలు",
       verifiedDocuments: "ధృవీకరించబడిన డాక్యుమెంట్లు",

@@ -49,8 +49,6 @@ const WorkerManagement: React.FC = () => {
   const [filteredWorkers, setFilteredWorkers] = useState<Worker[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [tradeFilter, setTradeFilter] = useState<string>('all');
-  const [attendanceFilter, setAttendanceFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
   const [selectedWorkers, setSelectedWorkers] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -209,58 +207,10 @@ const WorkerManagement: React.FC = () => {
       filtered = filtered.filter(worker => worker.status === statusFilter);
     }
 
-    // Trade filter
-    if (tradeFilter !== 'all') {
-      filtered = filtered.filter(worker => worker.trade.toLowerCase() === tradeFilter);
-    }
-
-    // Attendance filter
-    if (attendanceFilter !== 'all') {
-      filtered = filtered.filter(worker => worker.attendanceStatus === attendanceFilter);
-    }
-
     setFilteredWorkers(filtered);
-  }, [workers, searchTerm, statusFilter, tradeFilter, attendanceFilter]);
+  }, [workers, searchTerm, statusFilter]);
 
-  const getStatusColor = (status: Worker['status']) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-100 text-green-800';
-      case 'inactive':
-        return 'bg-gray-100 text-gray-800';
-      case 'suspended':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getAttendanceColor = (status: Worker['attendanceStatus']) => {
-    switch (status) {
-      case 'checked-in':
-        return 'bg-green-100 text-green-800';
-      case 'checked-out':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'absent':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const formatLastActive = (date: Date) => {
-    const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-    if (diffInHours < 1) {
-      return 'Just now';
-    } else if (diffInHours < 24) {
-      return `${diffInHours}h ago`;
-    } else {
-      const diffInDays = Math.floor(diffInHours / 24);
-      return `${diffInDays}d ago`;
-    }
-  };
+  /* Unused helpers removed to fix lint warnings */
 
   const handleSelectWorker = (workerId: string) => {
     setSelectedWorkers(prev =>
@@ -343,16 +293,16 @@ const WorkerManagement: React.FC = () => {
               <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors"><ArrowLeft className='h-6 w-6 text-gray-700' /></button>
               <div >
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                  Worker Management
+                  {t('establishment.workerManagement')}
                 </h1>
                 <p className="text-gray-600">
-                  Manage and monitor all registered workers
+                  {t('establishment.manageWorkers')}
                 </p>
               </div>
             </div>
             <button className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors" onClick={() => setIsModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Worker
+              {t('establishment.addWorker')}
             </button>
           </div>
         </div>
@@ -361,15 +311,15 @@ const WorkerManagement: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-            <div className="text-sm text-gray-600">Total Workers</div>
+            <div className="text-sm text-gray-600">{t('establishment.totalWorkers')}</div>
           </div>
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-green-600">{stats.active}</div>
-            <div className="text-sm text-gray-600">Active</div>
+            <div className="text-sm text-gray-600">{t('establishment.activeWorkers')}</div>
           </div>
           <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-emerald-600">{stats.checkedIn}</div>
-            <div className="text-sm text-gray-600">Checked In</div>
+            <div className="text-sm text-gray-600">{t('worker.checkedIn')}</div>
           </div>
           {/* <div className="card-mobile text-center">
             <div className="text-2xl font-bold text-orange-600">{stats.pendingDocs}</div>

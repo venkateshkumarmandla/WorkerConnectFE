@@ -76,11 +76,11 @@ const LocationMap: React.FC<LocationMapProps> = ({
     const R = 6371;
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
 
@@ -112,7 +112,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
         </div>
 
         {/* Center Marker */}
-        <div 
+        <div
           className="absolute transform -translate-x-1/2 -translate-y-1/2"
           style={{
             left: '50%',
@@ -131,11 +131,11 @@ const LocationMap: React.FC<LocationMapProps> = ({
             location.latitude,
             location.longitude
           );
-          
+
           // Simple positioning logic (in real app, use proper map projection)
           const offsetX = (location.longitude - defaultCenter.longitude) * 1000;
           const offsetY = (defaultCenter.latitude - location.latitude) * 1000;
-          
+
           const x = Math.max(5, Math.min(95, 50 + offsetX));
           const y = Math.max(5, Math.min(95, 50 + offsetY));
 
@@ -149,7 +149,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
               }}
               onClick={() => handleLocationSelect(location)}
             >
-              <div 
+              <div
                 className="w-4 h-4 rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform"
                 style={{ backgroundColor: getMarkerColor(location) }}
               >
@@ -185,7 +185,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
               {t('department.locationMap')}
             </h3>
           </div>
-          
+
           {showControls && (
             <div className="flex items-center space-x-2">
               <div className="flex items-center space-x-1 text-sm text-gray-600">
@@ -207,7 +207,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
         </div>
 
         {/* Map Container */}
-        <div 
+        <div
           ref={mapRef}
           className="relative rounded-lg border border-gray-200 overflow-hidden"
           style={{ height: isFullscreen ? 'calc(100vh - 120px)' : height }}
@@ -229,11 +229,10 @@ const LocationMap: React.FC<LocationMapProps> = ({
           {locations.map((location) => (
             <div
               key={location.id}
-              className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                selectedLocation?.id === location.id
+              className={`p-3 rounded-lg border cursor-pointer transition-colors ${selectedLocation?.id === location.id
                   ? 'border-blue-500 bg-blue-50'
                   : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-              }`}
+                }`}
               onClick={() => handleLocationSelect(location)}
             >
               <div className="flex items-center justify-between">
@@ -255,7 +254,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
                   </p>
                   {location.lastUpdate && (
                     <p className="text-xs text-gray-400">
-                      {location.lastUpdate.toLocaleTimeString()}
+                      {location.lastUpdate.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' })}
                     </p>
                   )}
                 </div>

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Users, UserCheck, UserX, Calendar, Eye, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Building2, Users, UserCheck, UserX, Calendar, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import LastLoggedIn from './LastloggedIn';
 import { establishmentApi, WorkerSummary, EstablishmentDashboardData } from '../api/establishment';
-import WorkerAttendanceTable from '../components/WorkerAttendanceTable';
 import WorkerPresentCount from '../components/WorkerPresentCount';
 
 const EstablishmentDashboard: React.FC = () => {
@@ -13,11 +12,15 @@ const EstablishmentDashboard: React.FC = () => {
   const { user } = useAuth();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const locationState = useLocation();
+  const [establishmentDetails] = useState<any>(locationState.state?.establishment || null);
   const establishmentId = id ? parseInt(id) : undefined;
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [dashboardData, setDashboardData] = useState<EstablishmentDashboardData | null>(null);
   const [workers, setWorkers] = useState<WorkerSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(5);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +60,21 @@ const EstablishmentDashboard: React.FC = () => {
     </Link>
   );
 
+  const formatTime = (timeStr?: string) => {
+    if (!timeStr) return null;
+    // If it's already in 12hr format (contains AM/PM), return as is
+    if (timeStr.includes('AM') || timeStr.includes('PM')) return timeStr;
+
+    // Otherwise try to parse as date
+    try {
+      const date = new Date(timeStr);
+      if (isNaN(date.getTime())) return timeStr; // Fallback to original string
+      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+    } catch {
+      return timeStr;
+    }
+  };
+
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -86,17 +104,15 @@ const EstablishmentDashboard: React.FC = () => {
               </div>
               <div>
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                  {establishmentId
-                    ? `Establishment Dashboard`
-                    : t('dashboard.welcomeEstSuccess').replace('{0}', (user as any)?.establishmentName || 'Establishment')}
+                  {establishmentDetails?.name || (establishmentId ? `Establishment Dashboard` : t('dashboard.welcomeEstSuccess').replace('{0}', (user as any)?.establishmentName || 'Establishment'))}
                 </h1>
                 <p className="text-gray-600 font-medium">
-                  {t('dashboard.todaySubtext')}
+                  {establishmentDetails?.location || t('dashboard.todaySubtext')}
                 </p>
               </div>
             </div>
             <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
-              <WorkerPresentCount />
+              <WorkerPresentCount count={dashboardData?.presentNow ?? null} />
               {!establishmentId && <LastLoggedIn time={user?.lastLoggedIn || undefined} />}
             </div>
           </div>
@@ -148,22 +164,21 @@ const EstablishmentDashboard: React.FC = () => {
           />
           <StatCard
             icon={UserCheck}
-            title="Present Today"
-            value={dashboardData?.presentCount}
-            color="text-green-600"
+            title={t('department.workersPresent')}
+            value={dashboardData?.presentNow}
+            color="text-emerald-600"
           />
           <StatCard
             icon={UserX}
-            title="Absent Today"
-            value={dashboardData?.absentCount}
+            title={t('department.workersAbsent')}
+            value={dashboardData?.totalWorkers ? (dashboardData.totalWorkers - (dashboardData.presentNow || 0)) : 0}
             color="text-red-600"
           />
-          {/* Example additional stat */}
           <StatCard
-            icon={Calendar}
-            title="Avg Attendance"
-            value="92%"
-            color="text-purple-600"
+            icon={CheckCircle}
+            title={t('establishment.avgAttendance')}
+            value={dashboardData?.totalCheckIns}
+            color="text-orange-600"
           />
         </div>
 
@@ -197,72 +212,79 @@ const EstablishmentDashboard: React.FC = () => {
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Left Column: Live Activity Feed */}
-          <div className="lg:col-span-1">
-            <WorkerAttendanceTable />
-          </div>
-
-          {/* Right Column: Worker List */}
-          <div className="lg:col-span-2">
+          {/* Right Column: Worker List (Expanded) */}
+          <div className="lg:col-span-3">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200">
               <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
                 <h3 className="text-lg font-semibold text-gray-900">
                   Assigned Workers Overview
                 </h3>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="px-3 py-1 border rounded text-xs"
-                  />
-                </div>
+                <input
+                  type="text"
+                  placeholder="Search by name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="px-3 py-1 border rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                />
               </div>
 
               <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
                 <table className="w-full text-sm text-left">
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
                     <tr>
-                      <th className="px-4 py-3">Worker Name</th>
-                      <th className="px-4 py-3">Check-In</th>
-                      <th className="px-4 py-3">Check-Out</th>
-                      <th className="px-4 py-3">Status</th>
-                      <th className="px-4 py-3">Details</th>
+                      <th className="px-4 py-3">{t('worker.fullName')}</th>
+                      <th className="px-4 py-3">{t('worker.checkIn')}</th>
+                      <th className="px-4 py-3">{t('worker.checkOut')}</th>
+                      <th className="px-4 py-3">{t('common.status')}</th>
                     </tr>
                   </thead>
                   <tbody>
                     {loading ? (
-                      <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-500">Loading workers...</td></tr>
+                      <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">Loading workers...</td></tr>
                     ) : workers.length === 0 ? (
-                      <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-500">No workers assigned to this establishment.</td></tr>
+                      <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">No workers assigned to this establishment.</td></tr>
                     ) : (
-                      workers.map((worker: WorkerSummary) => (
-                        <tr key={worker.workerId} className="border-b hover:bg-gray-50">
-                          <td className="px-4 py-3 font-medium text-gray-900">{worker.fullName}</td>
-                          <td className="px-4 py-3 text-gray-600">
-                            {worker.checkInTime ? new Date(worker.checkInTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
-                          </td>
-                          <td className="px-4 py-3 text-gray-600">
-                            {worker.checkOutTime ? new Date(worker.checkOutTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '-'}
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${worker.status === 'Present'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                              }`}>
-                              {worker.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3">
-                            <button className="text-blue-600 hover:text-blue-800">
-                              <Eye className="h-4 w-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      ))
+                      workers
+                        .filter(w => w.fullName.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .slice(0, visibleCount)
+                        .map((worker: WorkerSummary) => (
+                          <tr key={worker.workerId} className="border-b hover:bg-gray-50">
+                            <td className="px-4 py-3 font-medium text-gray-900">{worker.fullName}</td>
+                            <td className="px-4 py-3 text-gray-600">
+                              {formatTime(worker.checkInTime) || <span className="text-gray-400">—</span>}
+                            </td>
+                            <td className="px-4 py-3 text-gray-600">
+                              {formatTime(worker.checkOutTime) || <span className="text-gray-400">—</span>}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${worker.status === 'Present'
+                                ? 'bg-green-100 text-green-800'
+                                : worker.status === 'Checked Out'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-red-100 text-red-800'
+                                }`}>
+                                {worker.status === 'Present' ? t('common.present') :
+                                  worker.status === 'Checked Out' ? t('common.checkedOut') :
+                                    t('common.absent')}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
                     )}
                   </tbody>
                 </table>
               </div>
+
+              {!loading && workers.length > visibleCount && (
+                <div className="p-4 border-t border-gray-200 text-center bg-gray-50">
+                  <button
+                    onClick={() => setVisibleCount(prev => prev + 5)}
+                    className="text-blue-600 hover:text-blue-700 font-medium text-sm transition-colors"
+                  >
+                    View More Workers ↓
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -63,7 +63,7 @@ const DepartmentWorkersView: React.FC = () => {
     const formatTime = (dateTimeString: string | null) => {
         if (!dateTimeString) return '-';
         const date = new Date(dateTimeString);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' });
     };
 
     return (

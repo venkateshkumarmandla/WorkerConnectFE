@@ -65,7 +65,7 @@ const AttendanceHistory: React.FC = () => {
         const response = await api(endpoint, 'GET');
 
         // Map API response to component interface
-        const mapped = (response.data || []).map((record: any) => {
+        const mapped = ((response as any).data || []).map((record: any) => {
           const checkIn = record.check_in_date_time ? new Date(record.check_in_date_time) : undefined;
           const checkOut = record.check_out_date_time ? new Date(record.check_out_date_time) : undefined;
           const workHours = (checkIn && checkOut)
@@ -173,10 +173,10 @@ const AttendanceHistory: React.FC = () => {
   };
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
+    return date.toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      hour12: false
     });
   };
 

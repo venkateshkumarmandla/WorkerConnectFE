@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Shield, Lock, Eye, EyeOff } from 'lucide-react';
+import { Shield, Lock, Eye, EyeOff, Mail } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import FormInput from '../components/FormInput';
@@ -117,62 +117,39 @@ const DepartmentLogin: React.FC = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
             <div className="space-y-4">
-              {/* <FormSelect
-                label={t('department.role')}
-                value={formData.role}
-                onChange={(value) => setFormData(prev => ({ ...prev, role: value }))}
-                options={departmentRoles}
-                placeholder={t('forms.placeholders.selectOption')}
+              <FormInput
+                label={t("establishment.emailAddress")}
+                type="email"
+                value={formData.emailId}
+                onChange={(value) =>
+                  setFormData({ ...formData, emailId: value })
+                }
                 required
-                error={errors.role}
-              /> */}
+                error={errors.emailId}
+                autoComplete='new-email'
+                leftIcon={<Mail className="h-5 w-5" />}
+              />
 
-              <div className="relative">
-                {/* <User className="absolute left-3 top-10 h-5 w-5 text-gray-400" /> */}
-                {/* <FormInput
-                  label={t('auth.username')}
-                  type="text"
-                  value={formData.username}
-                  onChange={(value) => setFormData(prev => ({ ...prev, username: value }))}
-                  placeholder={t('auth.username')}
-                  required
-                  error={errors.username}
-                  className="pl-10"
-                /> */}
-                <FormInput
-                  label={t("establishment.emailAddress")}
-                  type="email"
-                  value={formData.emailId}
-                  onChange={(value) =>
-                    setFormData({ ...formData, emailId: value })
-                  }
-                  required
-                  error={errors.emailId}
-                  autoComplete='new-email'
-                />
-              </div>
-
-              <div className="relative">
-                <Lock className="absolute left-3 top-10 h-5 w-5 text-gray-400" />
-                <FormInput
-                  label={t('auth.password')}
-                  type={showPassword ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={(value) => setFormData(prev => ({ ...prev, password: value }))}
-                  placeholder={t('auth.password')}
-                  required
-                  error={errors.password}
-                  className="pl-10 pr-10"
-                  autoComplete='new-password'
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-10 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
+              <FormInput
+                label={t('auth.password')}
+                type={showPassword ? 'text' : 'password'}
+                value={formData.password}
+                onChange={(value) => setFormData(prev => ({ ...prev, password: value }))}
+                placeholder={t('auth.password')}
+                required
+                error={errors.password}
+                autoComplete='new-password'
+                leftIcon={<Lock className="h-5 w-5" />}
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="focus:outline-none"
+                  >
+                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                  </button>
+                }
+              />
             </div>
 
             <div className="flex items-center justify-between mt-6">

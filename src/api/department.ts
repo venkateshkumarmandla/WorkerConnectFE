@@ -21,6 +21,11 @@ export interface EstablishmentSummary {
         fullName: string;
         checkInTime: string;
     }>;
+    checkedOutList: Array<{
+        workerId: number;
+        fullName: string;
+        checkOutTime: string;
+    }>;
 }
 
 export const departmentApi = {
