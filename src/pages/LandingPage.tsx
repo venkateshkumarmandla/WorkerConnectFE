@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import ResponsiveButton from '../components/ui/ResponsiveButton';
 import ResponsiveCard from '../components/ui/ResponsiveCard';
-import CBN from '../Images/cbn.png';
-import Lokesh from '../Images/lokesh.png';
+import CBN from '../Images/cbn.jpg';
+import Lokesh from '../Images/lokesh.jpg';
 
 const LandingPage: React.FC = () => {
   const { t } = useLanguage();
@@ -66,10 +66,10 @@ const LandingPage: React.FC = () => {
                 role="img"
                 aria-label={t('leaders.cmAltText').replace('{0}', t('leaders.cmName'))}
               >
-                <img src={CBN} alt={t('leaders.cmName')} className="w-full h-full object-cover object-center" />
+                <img src={CBN} alt={t('leaders.cmName')} className="w-full h-full object-contain object-center" />
               </div>
               <div className="mt-4 text-center">
-                <h3 className="text-orange-600 font-bold text-lg sm:text-2xl tracking-tight leading-tight">{t('leaders.cmName')}</h3>
+                <h3 className="text-orange-600 font-bold text-lg sm:text-xl tracking-tight leading-tight">{t('leaders.cmName')}</h3>
                 <p className="text-black font-bold text-xs sm:text-base mt-1">{t('leaders.cmTitle')}</p>
                 <p className="text-gray-600 text-[10px] sm:text-sm font-medium mt-0.5">
                   {t('leaders.cmGovt')}
@@ -84,12 +84,12 @@ const LandingPage: React.FC = () => {
                 role="img"
                 aria-label={t('leaders.officialAltText').replace('{0}', t('leaders.officialName'))}
               >
-                <img src={Lokesh} alt={t('leaders.officialName')} className="w-full h-full object-cover object-center" />
+                <img src={Lokesh} alt={t('leaders.officialName')} className="w-full h-full object-contain object-center" />
               </div>
               <div className="mt-4 text-center">
-                <h3 className="text-orange-600 font-bold text-base sm:text-xl leading-tight tracking-tight">{t('leaders.officialName')}</h3>
-                <p className="text-black font-bold text-[10px] sm:text-sm mt-1 leading-tight">{t('leaders.officialTitle')}</p>
-                <p className="text-gray-600 text-[9px] sm:text-xs font-medium mt-0.5">
+                <h3 className="text-orange-600 font-bold text-lg sm:text-xl leading-tight tracking-tight">{t('leaders.officialName')}</h3>
+                <p className="text-black font-bold text-xs sm:text-base mt-1">{t('leaders.officialTitle')}</p>
+                <p className="text-gray-600 text-[10px] sm:text-sm font-medium mt-0.5">
                   {t('leaders.officialGovt')}
                 </p>
               </div>
