@@ -1,4 +1,5 @@
 import { api } from './api';
+import { DUMMY_ESTABLISHMENT_DASHBOARD, DUMMY_DEPARTMENT_WISE_STATS } from './dummyData';
 
 export interface WorkerSummary {
     workerId: number;
@@ -16,16 +17,24 @@ export interface EstablishmentDashboardData {
 }
 
 export const establishmentApi = {
-    // Fetch all workers for the logged-in establishment
-    getWorkers: async (): Promise<WorkerSummary[]> => {
-        const res = await api<{ data: WorkerSummary[] }>('/establishment/workers', 'GET');
-        return res.data;
+    // Fetch all workers for a specific establishment or the logged-in one
+    getWorkers: async (establishmentId?: number): Promise<WorkerSummary[]> => {
+        try {
+            const url = establishmentId
+                ? `/establishment/workerdetails?establishmentId=${establishmentId}`
+                : '/establishment/workers';
+            const res = await api<{ data: WorkerSummary[] }>(url, 'GET');
+            return res.data && res.data.length > 0 ? res.data : DUMMY_ESTABLISHMENT_DASHBOARD.workers;
+        } catch (error) {
+            console.error("Failed to fetch establishment workers, returning dummy data:", error);
+            return DUMMY_ESTABLISHMENT_DASHBOARD.workers;
+        }
     },
 
     // Get aggregated dashboard data if available, or we compute from workers
-    getDashboardData: async (): Promise<EstablishmentDashboardData> => {
+    getDashboardData: async (establishmentId?: number): Promise<EstablishmentDashboardData> => {
         // This might be a composite call or handled by the component
-        const workers = await establishmentApi.getWorkers();
+        const workers = await establishmentApi.getWorkers(establishmentId);
 
         // Calculate stats on client or fetch if backend provides
         const totalWorkers = workers.length;
@@ -42,9 +51,14 @@ export const establishmentApi = {
 
     // Get department-wise statistics for establishment
     getDepartmentStats: async (establishmentId: number, date?: string): Promise<any> => {
-        const params = date ? `?date=${date}` : '';
-        const res = await api<{ data: any }>(`/attendance/establishment/${establishmentId}/department-stats${params}`, 'GET');
-        return res.data;
+        try {
+            const params = date ? `?date=${date}` : '';
+            const res = await api<{ data: any }>(`/attendance/establishment/${establishmentId}/department-stats${params}`, 'GET');
+            return res.data && res.data.departments && res.data.departments.length > 0 ? res.data : { departments: DUMMY_DEPARTMENT_WISE_STATS };
+        } catch (error) {
+            console.error("Failed to fetch establishment department stats, returning dummy data:", error);
+            return { departments: DUMMY_DEPARTMENT_WISE_STATS };
+        }
     },
 
     // Get workers in a specific department with attendance

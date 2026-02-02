@@ -4,16 +4,14 @@ import { Shield, Lock, Eye, EyeOff } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import FormInput from '../components/FormInput';
-import FormSelect from '../components/FormSelect';
 import { departmentLogin } from '../api/api';
+import toast from 'react-hot-toast';
 
 const DepartmentLogin: React.FC = () => {
   const { t } = useLanguage();
   const { login } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState("");
-
   const [formData, setFormData] = useState({
     // username: '',
     password: '',
@@ -22,13 +20,6 @@ const DepartmentLogin: React.FC = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-
-  const departmentRoles = [
-    { value: 'acl', label: t('department.roles.acl') || 'ACL (Assistant Commissioner of Labour)' },
-    { value: 'dcl', label: t('department.roles.dcl') || 'DCL (Deputy Commissioner of Labour)' },
-    { value: 'addl_commissioner', label: t('department.roles.addlCommissioner') || 'Additional Commissioner' },
-    { value: 'commissioner', label: t('department.roles.commissioner') || 'Commissioner' }
-  ];
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -78,7 +69,6 @@ const DepartmentLogin: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
     e.preventDefault();
 
     if (!validateForm()) return;
@@ -86,6 +76,7 @@ const DepartmentLogin: React.FC = () => {
     try {
       const data = await departmentLogin(formData);
       console.log("Login successful:", data);
+      toast.success("Welcome back! Login successful.");
       login({
         type: "department",
         departmentRoleId: data.departmentRoleId,
@@ -100,7 +91,8 @@ const DepartmentLogin: React.FC = () => {
       localStorage.setItem('role', 'department');
       navigate("/dashboard/department");
     } catch (err: any) {
-      setError("Invalid credentials or server error");
+      const errorMsg = err?.response?.data?.message || err?.message || "Invalid credentials or server error";
+      toast.error(errorMsg);
       console.error("Login failed:", err);
     } finally {
       setIsLoading(false);

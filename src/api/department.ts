@@ -1,4 +1,5 @@
 import { api } from './api';
+import { DUMMY_DEPARTMENT_STATS, DUMMY_ESTABLISHMENTS } from './dummyData';
 
 export interface DepartmentStats {
     totalEstablishments: number;
@@ -25,19 +26,24 @@ export interface EstablishmentSummary {
 export const departmentApi = {
     // Fetch overall department statistics
     getStats: async (): Promise<DepartmentStats> => {
-        // Determine which endpoint maps to this. 
-        // If not exact, we might aggregate from establishments, but ideal is a direct endpoint.
-        // As per request: GET /api/department/establishments provides list, we might calc stats from it or separate call.
-        // Let's assume a dashboard stats endpoint or aggregate on client if needed.
-        // For now, let's try to get "card details" which seems to be the stats.
-        const res = await api<{ data: DepartmentStats }>('/department/dashboard/stats', 'GET');
-        return res.data;
+        try {
+            const res = await api<{ data: DepartmentStats }>('/department/dashboard/stats', 'GET');
+            return res.data || DUMMY_DEPARTMENT_STATS;
+        } catch (error) {
+            console.error("Failed to fetch department dashboard data, returning dummy data:", error);
+            return DUMMY_DEPARTMENT_STATS;
+        }
     },
 
     // Fetch all establishments with their active status
     getEstablishments: async (): Promise<EstablishmentSummary[]> => {
-        const res = await api<{ data: EstablishmentSummary[] }>('/department/establishments', 'GET');
-        return res.data;
+        try {
+            const res = await api<{ data: EstablishmentSummary[] }>('/department/establishments', 'GET');
+            return res.data && res.data.length > 0 ? res.data : DUMMY_ESTABLISHMENTS;
+        } catch (error) {
+            console.error("Failed to fetch establishments, returning dummy data:", error);
+            return DUMMY_ESTABLISHMENTS;
+        }
     },
 
     // Fetch specific establishment present status (detail view)

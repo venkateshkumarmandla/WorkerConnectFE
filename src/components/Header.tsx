@@ -5,6 +5,7 @@ import { Globe, LogOut, Menu, X, ChevronDown, Building2, HardHat, ShieldCheck, U
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import APSymbol from '../Images/APSymbol.png';
+import toast from 'react-hot-toast';
 
 const Header: React.FC = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -29,14 +30,23 @@ const Header: React.FC = () => {
   };
 
   const handleLogout = async () => {
+    const userRole = user?.type;
+    let logoutMsg = t('navigation.logoutSuccess') || "Logout successful";
+
+    if (userRole === 'worker') logoutMsg = "Worker Logout Success";
+    else if (userRole === 'establishment') logoutMsg = "Establishment Logout Success";
+    else if (userRole === 'department') logoutMsg = "Department Logout Success";
+
     try {
       const response: any = await logoutUser();
-      const msg = response?.attendanceMessage || t('navigation.logoutSuccess') || "Logout successful";
+      const msg = response?.attendanceMessage || logoutMsg;
       logout();
-      navigate('/login/worker', { state: { message: msg } });
+      toast.success(msg);
+      navigate('/');
       setMobileMenuOpen(false);
     } catch (error) {
       logout();
+      toast.success(logoutMsg);
       navigate('/');
       setMobileMenuOpen(false);
     }
@@ -57,7 +67,14 @@ const Header: React.FC = () => {
       <div className="max-w-[1200px] mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20 gap-4">
           {/* Logo & Portal Title */}
-          <Link to="/" className="flex items-center gap-3 flex-shrink-0 group">
+          <Link
+            to={
+              user?.type === 'worker' ? '/dashboard/worker' :
+                user?.type === 'establishment' ? '/dashboard/establishment' :
+                  user?.type === 'department' ? '/dashboard/department' : '/'
+            }
+            className="flex items-center gap-3 flex-shrink-0 group"
+          >
             <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center p-1 shadow-sm border border-gray-100 group-hover:scale-105 transition-transform duration-300" aria-label={t('leaders.logoAltText')}>
               <img src={APSymbol} alt="AP Symbol" className="w-full h-full object-contain" />
             </div>

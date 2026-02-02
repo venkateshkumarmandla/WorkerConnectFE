@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Users, Search, Filter, Plus, Edit, Eye, Trash2, Download, MapPin, Clock, ArrowLeft } from 'lucide-react';
+import { Users, Search, Filter, Plus, Download, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import AddWorkerModal from './AddWorker';
 import { fetchWorkerDetailsByEstablishment } from '../api/api';
@@ -340,7 +340,7 @@ const WorkerManagement: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div className='flex items-center space-x-3 mb-6'>
-              <button onClick={() => navigate(-1)} className="p-2 rounded-full:bg-gray-100"><ArrowLeft className='h-6 w-6 text-gray-700' /></button>
+              <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors"><ArrowLeft className='h-6 w-6 text-gray-700' /></button>
               <div >
                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
                   Worker Management

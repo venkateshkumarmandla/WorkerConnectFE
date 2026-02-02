@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit3, Save, X, Phone, Mail, MapPin, Briefcase, Calendar, FileText, Camera, Loader } from 'lucide-react';
+import { User, Edit3, Save, X, Phone, Mail, MapPin, Briefcase, Calendar, FileText, Camera, Loader, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth, WorkerUser } from '../contexts/AuthContext';
 import FormInput from '../components/FormInput';
@@ -254,6 +254,13 @@ const WorkerProfile: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="card-mobile mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('common.back') || 'Back'}
+          </button>
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">

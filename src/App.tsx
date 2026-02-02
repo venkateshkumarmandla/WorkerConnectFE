@@ -1,5 +1,5 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { AuthProvider } from './contexts/AuthContext';
 import Header from './components/Header';
@@ -52,6 +52,7 @@ function App() {
         <AuthProvider>
           <Router>
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 safe-area-top safe-area-bottom">
+              <Toaster position="top-right" />
               <NetworkStatus />
               <OfflineIndicator />
               <Header />
@@ -138,6 +139,11 @@ function App() {
                       </DashboardAuthGuard>
                     </ProtectedRoute>
                   } />
+                  <Route path="/attendance/reports" element={
+                    <ProtectedRoute>
+                      <Reports />
+                    </ProtectedRoute>
+                  } />
 
                   {/* Department Protected Routes */}
                   <Route path="/dashboard/department" element={
@@ -170,6 +176,11 @@ function App() {
                   <Route path="/compliance/monitoring" element={
                     <ProtectedRoute userType="department">
                       <ComplianceMonitoring />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/establishment/:id" element={
+                    <ProtectedRoute>
+                      <EstablishmentDashboard />
                     </ProtectedRoute>
                   } />
 

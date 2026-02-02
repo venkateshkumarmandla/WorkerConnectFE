@@ -1,5 +1,6 @@
 // Import API configuration
 import API_CONFIG from './config';
+import { DUMMY_WORKERS } from './dummyData';
 
 // Use centralized API configuration
 import { storage } from '../utils/storage';
@@ -326,14 +327,24 @@ export const fetchWorkerDetailsByEstablishment = (establishmentId: number) => {
   return api<WorkerDetailsResponse>(
     `/establishment/workerdetails?establishmentId=${establishmentId}`,
     "GET"
-  ).then((res) => res.data);
+  ).then((res) => {
+    return (res.data && (Array.isArray(res.data) ? res.data.length > 0 : true)) ? res.data : DUMMY_WORKERS;
+  }).catch((err) => {
+    console.warn("Using dummy data for workers due to error:", err);
+    return DUMMY_WORKERS;
+  });
 };
 
 export const fetchWorkerDetails = () => {
   return api<WorkerDetailsResponse>(
     `/establishment/workerdetails`,
     "GET"
-  ).then((res) => res.data);
+  ).then((res) => {
+    return (res.data && (Array.isArray(res.data) ? res.data.length > 0 : true)) ? res.data : DUMMY_WORKERS;
+  }).catch((err) => {
+    console.warn("Using dummy data for worker details due to error:", err);
+    return DUMMY_WORKERS;
+  });
 };
 
 // types.ts

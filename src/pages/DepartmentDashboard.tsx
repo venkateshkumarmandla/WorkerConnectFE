@@ -4,6 +4,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import LocationMap from '../components/LocationMap';
 import LastLoggedIn from './LastloggedIn';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { departmentApi, DepartmentStats, EstablishmentSummary } from '../api/department';
 import WorkerAttendanceTable from '../components/WorkerAttendanceTable';
 import WorkerPresentCount from '../components/WorkerPresentCount';
@@ -202,9 +203,9 @@ const DepartmentDashboard: React.FC = () => {
                                 }
                               </td>
                               <td className="px-4 py-3">
-                                <button className="text-blue-600 hover:text-blue-800" title="View Details">
+                                <Link to={`/establishment/${est.establishmentId}`} className="text-blue-600 hover:text-blue-800" title="View Details">
                                   <Eye className="h-4 w-4" />
-                                </button>
+                                </Link>
                               </td>
                             </tr>
                           ))

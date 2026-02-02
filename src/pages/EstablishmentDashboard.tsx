@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Building2, Users, UserCheck, UserX, Calendar, Eye, CheckCircle, AlertCircle } from 'lucide-react';
+import { Building2, Users, UserCheck, UserX, Calendar, Eye, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import LastLoggedIn from './LastloggedIn';
 import { establishmentApi, WorkerSummary, EstablishmentDashboardData } from '../api/establishment';
 import WorkerAttendanceTable from '../components/WorkerAttendanceTable';
@@ -11,6 +11,9 @@ import WorkerPresentCount from '../components/WorkerPresentCount';
 const EstablishmentDashboard: React.FC = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const establishmentId = id ? parseInt(id) : undefined;
 
   const [dashboardData, setDashboardData] = useState<EstablishmentDashboardData | null>(null);
   const [workers, setWorkers] = useState<WorkerSummary[]>([]);
@@ -21,7 +24,7 @@ const EstablishmentDashboard: React.FC = () => {
       try {
         setLoading(true);
         // Fetch dashboard data (workers + stats)
-        const data = await establishmentApi.getDashboardData();
+        const data = await establishmentApi.getDashboardData(establishmentId);
         setDashboardData(data);
         setWorkers(data.workers);
       } catch (error) {
@@ -31,14 +34,14 @@ const EstablishmentDashboard: React.FC = () => {
       }
     };
 
-    if (user?.type === "establishment") {
+    if (user?.type === "establishment" || user?.type === "department") {
       fetchData();
 
       // Poll mostly for status updates if not using websockets
       const interval = setInterval(fetchData, 30000);
       return () => clearInterval(interval);
     }
-  }, [user]);
+  }, [user, establishmentId]);
 
   const StatCard = ({ icon: Icon, title, value, color, link }: any) => (
     <Link to={link || '#'} className="card-mobile hover:shadow-xl transition-shadow group">
@@ -58,33 +61,44 @@ const EstablishmentDashboard: React.FC = () => {
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex items-center space-x-4 mb-2">
-            <div className="flex-shrink-0">
-              {user?.type === 'establishment' && user.logoUrl ? (
-                <img
-                  src={user.logoUrl}
-                  alt="Establishment Logo"
-                  className="h-16 w-16 object-contain rounded-lg border border-gray-200 shadow-sm"
-                />
-              ) : (
-                <div className="h-16 w-16 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 border border-orange-200">
-                  <Building2 className="h-10 w-10" />
-                </div>
-              )}
+        <div className="mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center text-blue-600 hover:text-blue-800 mb-4 font-medium transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            {t('common.back') || 'Back'}
+          </button>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex items-center space-x-4 mb-2">
+              <div className="flex-shrink-0">
+                {user?.type === 'establishment' && !establishmentId && user.logoUrl ? (
+                  <img
+                    src={user.logoUrl}
+                    alt="Establishment Logo"
+                    className="h-16 w-16 object-contain rounded-lg border border-gray-200 shadow-sm"
+                  />
+                ) : (
+                  <div className="h-16 w-16 bg-orange-100 rounded-lg flex items-center justify-center text-orange-600 border border-orange-200">
+                    <Building2 className="h-10 w-10" />
+                  </div>
+                )}
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                  {establishmentId
+                    ? `Establishment Dashboard`
+                    : t('dashboard.welcomeEstSuccess').replace('{0}', (user as any)?.establishmentName || 'Establishment')}
+                </h1>
+                <p className="text-gray-600 font-medium">
+                  {t('dashboard.todaySubtext')}
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                {t('dashboard.welcomeEstSuccess').replace('{0}', (user as any)?.establishmentName || 'Establishment')}
-              </h1>
-              <p className="text-gray-600 font-medium">
-                {t('dashboard.todaySubtext')}
-              </p>
+            <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
+              <WorkerPresentCount />
+              {!establishmentId && <LastLoggedIn time={user?.lastLoggedIn || undefined} />}
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
-            <WorkerPresentCount />
-            <LastLoggedIn time={user?.lastLoggedIn || undefined} />
           </div>
         </div>
 
@@ -96,7 +110,7 @@ const EstablishmentDashboard: React.FC = () => {
               <p className="text-sm text-orange-800 font-semibold">
                 {t('dashboard.welcomeEstMissing')}
               </p>
-              <Link to="/establishment/profile" className="text-sm text-orange-600 hover:text-orange-700 font-bold underline mt-1 block">
+              <Link to="/profile/establishment" className="text-sm text-orange-600 hover:text-orange-700 font-bold underline mt-1 block">
                 {t('worker.viewProfile')} →
               </Link>
             </div>
@@ -221,7 +235,7 @@ const EstablishmentDashboard: React.FC = () => {
                     ) : workers.length === 0 ? (
                       <tr><td colSpan={5} className="px-4 py-8 text-center text-gray-500">No workers assigned to this establishment.</td></tr>
                     ) : (
-                      workers.map((worker) => (
+                      workers.map((worker: WorkerSummary) => (
                         <tr key={worker.workerId} className="border-b hover:bg-gray-50">
                           <td className="px-4 py-3 font-medium text-gray-900">{worker.fullName}</td>
                           <td className="px-4 py-3 text-gray-600">

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Shield, Edit, Save, X, User, Mail, Phone, MapPin, Building2, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Shield, Edit, Save, X, User, Mail, Phone, MapPin, Building2, Calendar, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
 import FormInput from '../components/FormInput';
@@ -8,6 +9,7 @@ import FormSelect from '../components/FormSelect';
 const DepartmentProfile: React.FC = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     officerName: 'Sri K. Venkateswara Rao',
@@ -119,6 +121,13 @@ const DepartmentProfile: React.FC = () => {
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t('common.back') || 'Back'}
+        </button>
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
@@ -132,7 +141,7 @@ const DepartmentProfile: React.FC = () => {
               </p>
             </div>
           </div>
-          
+
           <div className="flex space-x-2">
             {isEditing ? (
               <>
@@ -323,19 +332,19 @@ const DepartmentProfile: React.FC = () => {
             <h3 className="font-semibold text-gray-900 mb-1">Dashboard</h3>
             <p className="text-sm text-gray-600">View statistics</p>
           </button>
-          
+
           <button className="card-mobile text-center hover:shadow-lg transition-shadow">
             <Building2 className="h-8 w-8 text-blue-600 mx-auto mb-2" />
             <h3 className="font-semibold text-gray-900 mb-1">Establishments</h3>
             <p className="text-sm text-gray-600">Manage establishments</p>
           </button>
-          
+
           <button className="card-mobile text-center hover:shadow-lg transition-shadow">
             <User className="h-8 w-8 text-blue-600 mx-auto mb-2" />
             <h3 className="font-semibold text-gray-900 mb-1">Workers</h3>
             <p className="text-sm text-gray-600">Worker management</p>
           </button>
-          
+
           <button className="card-mobile text-center hover:shadow-lg transition-shadow">
             <Calendar className="h-8 w-8 text-blue-600 mx-auto mb-2" />
             <h3 className="font-semibold text-gray-900 mb-1">Reports</h3>

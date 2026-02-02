@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Building2, Edit, Save, X, Phone, MapPin, Calendar, Users, FileText } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Building2, Edit, Save, X, Phone, MapPin, Calendar, Users, FileText, ArrowLeft } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -9,6 +10,7 @@ import FormSelect from '../components/FormSelect';
 const EstablishmentProfile: React.FC = () => {
   const { t } = useLanguage();
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     establishmentName: 'ABC Construction Ltd.',
@@ -172,6 +174,13 @@ const EstablishmentProfile: React.FC = () => {
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t('common.back') || 'Back'}
+        </button>
         {/* Header and Logo Section */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6">

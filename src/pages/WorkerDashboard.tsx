@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Calendar, Settings, Loader, CheckCircle, XCircle, AlertCircle, TrendingUp, BarChart3 } from 'lucide-react';
+import { User, Calendar, Settings, Loader, CheckCircle, XCircle, AlertCircle, TrendingUp, BarChart3, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -205,6 +205,13 @@ const WorkerDashboard: React.FC = () => {
   return (
     <div className="min-h-screen py-8 mobile-nav-spacing">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center text-blue-600 hover:text-blue-800 mb-6 font-medium transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          {t('common.back') || 'Back'}
+        </button>
         {/* Header */}
         <div className="mb-8 flex justify-between items-center bg-gray-50 p-6 rounded-2xl border border-gray-100 shadow-sm">
           <div className="flex items-center space-x-4">

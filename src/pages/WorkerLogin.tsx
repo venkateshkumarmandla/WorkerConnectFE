@@ -7,7 +7,7 @@ import FormInput from '../components/FormInput';
 // import BiometricAuth from '../components/BiometricAuth';
 // import { Capacitor } from '@capacitor/core';
 import { loginWorker, getWorkerProfile } from '../api/api';
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { storage } from '../utils/storage';
 
 const WorkerLogin: React.FC = () => {
@@ -218,7 +218,6 @@ const WorkerLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <Toaster position="top-center" />
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">

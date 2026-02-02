@@ -3,6 +3,7 @@ import { Building2, Search, Filter, Plus, Edit, Eye, Trash2, Download, MapPin, C
 import { useLanguage } from '../contexts/LanguageContext';
 import { api } from '../api/api';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 interface Establishment {
   id: string;
@@ -52,7 +53,7 @@ const EstablishmentManagement: React.FC = () => {
       try {
         setLoading(true);
         const response = await api('/department/establishments', 'GET');
-        
+
         // Map API response to component interface
         const mapped = (response.data || []).map((est: any) => ({
           id: est.establishment_id?.toString() || '',
@@ -275,7 +276,7 @@ const EstablishmentManagement: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -287,7 +288,7 @@ const EstablishmentManagement: React.FC = () => {
               <option value="pending">Pending</option>
               <option value="suspended">Suspended</option>
             </select>
-            
+
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
@@ -299,7 +300,7 @@ const EstablishmentManagement: React.FC = () => {
               <option value="state_government">State Government</option>
               <option value="central_government">Central Government</option>
             </select>
-            
+
             <select
               value={districtFilter}
               onChange={(e) => setDistrictFilter(e.target.value)}
@@ -313,7 +314,7 @@ const EstablishmentManagement: React.FC = () => {
               <option value="chittoor">Chittoor</option>
             </select>
           </div>
-          
+
           <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
             <div className="flex items-center space-x-4">
               <label className="flex items-center">
@@ -328,7 +329,7 @@ const EstablishmentManagement: React.FC = () => {
                 </span>
               </label>
             </div>
-            
+
             <button
               onClick={exportEstablishments}
               className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
@@ -436,10 +437,9 @@ const EstablishmentManagement: React.FC = () => {
                       </td>
                       <td className="py-3 px-4">
                         <div className="text-center">
-                          <div className={`text-sm font-medium ${
-                            getComplianceScore(establishment.compliance) >= 80 ? 'text-green-600' :
-                            getComplianceScore(establishment.compliance) >= 60 ? 'text-yellow-600' : 'text-red-600'
-                          }`}>
+                          <div className={`text-sm font-medium ${getComplianceScore(establishment.compliance) >= 80 ? 'text-green-600' :
+                              getComplianceScore(establishment.compliance) >= 60 ? 'text-yellow-600' : 'text-red-600'
+                            }`}>
                             {getComplianceScore(establishment.compliance)}%
                           </div>
                           <div className="text-xs text-gray-500">Compliant</div>
@@ -447,12 +447,13 @@ const EstablishmentManagement: React.FC = () => {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center space-x-2">
-                          <button
-                            className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-100 rounded"
+                          <Link
+                            to={`/establishment/${establishment.id}`}
+                            className="p-1 text-blue-600 hover:text-blue-700 hover:bg-blue-100 rounded inline-block"
                             title="View Details"
                           >
                             <Eye className="h-4 w-4" />
-                          </button>
+                          </Link>
                           <button
                             className="p-1 text-green-600 hover:text-green-700 hover:bg-green-100 rounded"
                             title="Edit Establishment"
