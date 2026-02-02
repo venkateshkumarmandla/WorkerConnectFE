@@ -233,6 +233,7 @@ const EstablishmentDashboard: React.FC = () => {
                   <thead className="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0">
                     <tr>
                       <th className="px-4 py-3">{t('worker.fullName')}</th>
+                      <th className="px-4 py-3">{t('worker.siteLocation')}</th>
                       <th className="px-4 py-3">{t('worker.checkIn')}</th>
                       <th className="px-4 py-3">{t('worker.checkOut')}</th>
                       <th className="px-4 py-3">{t('common.status')}</th>
@@ -240,9 +241,9 @@ const EstablishmentDashboard: React.FC = () => {
                   </thead>
                   <tbody>
                     {loading ? (
-                      <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">Loading workers...</td></tr>
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">Loading workers...</td></tr>
                     ) : workers.length === 0 ? (
-                      <tr><td colSpan={4} className="px-4 py-8 text-center text-gray-500">No workers assigned to this establishment.</td></tr>
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-gray-500">No workers assigned to this establishment.</td></tr>
                     ) : (
                       workers
                         .filter(w => w.fullName.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -250,11 +251,22 @@ const EstablishmentDashboard: React.FC = () => {
                         .map((worker: WorkerSummary) => (
                           <tr key={worker.workerId} className="border-b hover:bg-gray-50">
                             <td className="px-4 py-3 font-medium text-gray-900">{worker.fullName}</td>
+                            <td className="px-4 py-3 text-gray-600">{worker.siteLocation}</td>
                             <td className="px-4 py-3 text-gray-600">
-                              {formatTime(worker.checkInTime) || <span className="text-gray-400">—</span>}
+                              <div className="flex flex-col">
+                                <span>{formatTime(worker.checkInTime) || <span className="text-gray-400">—</span>}</span>
+                                {worker.checkInTime && worker.gate && (
+                                  <span className="text-xs text-gray-500">{worker.gate}</span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-4 py-3 text-gray-600">
-                              {formatTime(worker.checkOutTime) || <span className="text-gray-400">—</span>}
+                              <div className="flex flex-col">
+                                <span>{formatTime(worker.checkOutTime) || <span className="text-gray-400">—</span>}</span>
+                                {worker.checkOutTime && worker.gate && (
+                                  <span className="text-xs text-gray-500">{worker.gate}</span>
+                                )}
+                              </div>
                             </td>
                             <td className="px-4 py-3">
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${worker.status === 'Present'

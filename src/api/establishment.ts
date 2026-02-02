@@ -7,6 +7,8 @@ export interface WorkerSummary {
     status: 'Present' | 'Not Present' | 'Checked Out';
     checkInTime?: string;
     checkOutTime?: string;
+    siteLocation: string;
+    gate?: string;
 }
 
 export interface EstablishmentDashboardData {

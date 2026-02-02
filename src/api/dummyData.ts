@@ -1,6 +1,50 @@
 import { DepartmentStats, EstablishmentSummary } from './department';
 import { EstablishmentDashboardData, WorkerSummary } from './establishment';
 
+// Helper to generate workers
+const generateWorkers = (count: number, startId: number): WorkerSummary[] => {
+    const locations = ["Amaravati Gandhi Nagar", "Guntur MG Street", "Vijayawada Benz Circle", "Visakhapatnam Beach Road", "Nellore Trunk Road", "Kurnool Bellary Road"];
+    const gates = ["North Gate", "South Gate", "East Gate", "West Gate", "Gate 1", "Gate 2", "Gate 3", "Gate 4"];
+    const names = [
+        "Ravi Kumar Reddy", "Suresh Babu", "K. Prasad", "M. Rajesh Kumar", "B. Shiva Prasad", "P. Venkat",
+        "S. Murthy", "D. Lakshmi", "G. Ramana", "V. Krishna", "T. Naidu", "J. Sai",
+        "Lakshmi Narayana", "P. Rajesh", "M. Satyam", "K. Bhanu", "A. Srikanth", "V. Ravi",
+        "S. Anitha", "R. Mohit", "Chandra Sekhar", "Anitha Reddy", "L. Babu", "M. Ganga",
+        "T. Somu", "B. Ratnam", "Mohan Krishna", "S. Venkatesh", "D. Rao", "J. Bhavani"
+    ];
+
+    return Array.from({ length: count }, (_, i) => {
+        const isPresent = Math.random() > 0.3; // 70% present
+        const hasCheckedOut = isPresent && Math.random() > 0.7; // 30% of present have checked out
+        const nameIndex = (startId + i) % names.length;
+
+        let status: 'Present' | 'Not Present' | 'Checked Out' = 'Not Present';
+        let checkInTime: string | undefined;
+        let checkOutTime: string | undefined;
+
+        if (isPresent) {
+            status = 'Present';
+            checkInTime = `2026-02-02T${String(8 + Math.floor(Math.random() * 2)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00Z`;
+
+            if (hasCheckedOut) {
+                status = 'Checked Out';
+                checkOutTime = `2026-02-02T${String(16 + Math.floor(Math.random() * 2)).padStart(2, '0')}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}:00Z`;
+            }
+        }
+
+        return {
+            workerId: startId + i,
+            fullName: names[nameIndex], // Removed index suffix
+            status,
+            checkInTime,
+            checkOutTime,
+            siteLocation: locations[Math.floor(i / 10) % locations.length], // Rotate every 10 workers
+            gate: isPresent || hasCheckedOut ? gates[Math.floor(Math.random() * gates.length)] : undefined
+        };
+    });
+};
+
+
 export const DUMMY_DEPARTMENT_STATS: DepartmentStats = {
     totalEstablishments: 6,
     totalWorkers: 450,
@@ -103,71 +147,16 @@ export const DUMMY_ESTABLISHMENT_DASHBOARD: EstablishmentDashboardData = {
     absentCount: 15,
     totalCheckIns: 85,
     totalCheckOuts: 10,
-    workers: [
-        { workerId: 101, fullName: "Venkatesh Prasad", status: 'Present', checkInTime: "2026-02-02T09:00:00Z" },
-        { workerId: 102, fullName: "Satyam Naidu", status: 'Checked Out', checkInTime: "2026-02-02T08:00:00Z", checkOutTime: "2026-02-02T17:00:00Z" },
-        { workerId: 103, fullName: "Anjaneyulu Rao", status: 'Present', checkInTime: "2026-02-02T08:30:00Z" },
-        { workerId: 104, fullName: "Sai Ram K.", status: 'Present', checkInTime: "2026-02-02T09:15:00Z" },
-        { workerId: 105, fullName: "Appa Rao M.", status: 'Checked Out', checkInTime: "2026-02-02T08:15:00Z", checkOutTime: "2026-02-02T16:45:00Z" },
-        { workerId: 106, fullName: "M. Rajesh Kumar", status: 'Present', checkInTime: "2026-02-02T08:45:00Z" },
-        { workerId: 107, fullName: "B. Shiva Prasad", status: 'Present', checkInTime: "2026-02-02T09:20:00Z" }
-    ]
+    workers: generateWorkers(25, 100)
 };
 
 export const DUMMY_WORKERS_BY_ESTABLISHMENT: Record<number, WorkerSummary[]> = {
-    1: [
-        { workerId: 101, fullName: "Ravi Kumar Reddy", status: 'Present', checkInTime: "2026-02-02T08:45:00Z" },
-        { workerId: 102, fullName: "Suresh Babu", status: 'Present', checkInTime: "2026-02-02T09:10:00Z" },
-        { workerId: 103, fullName: "K. Prasad", status: 'Checked Out', checkInTime: "2026-02-02T08:00:00Z", checkOutTime: "2026-02-02T17:15:00Z" },
-        { workerId: 104, fullName: "M. Rajesh Kumar", status: 'Present', checkInTime: "2026-02-02T08:30:00Z" },
-        { workerId: 105, fullName: "B. Shiva Prasad", status: 'Present', checkInTime: "2026-02-02T09:05:00Z" },
-        { workerId: 106, fullName: "P. Venkat", status: 'Checked Out', checkInTime: "2026-02-02T08:10:00Z", checkOutTime: "2026-02-02T16:50:00Z" },
-        { workerId: 107, fullName: "S. Murthy", status: 'Present', checkInTime: "2026-02-02T08:15:00Z" },
-        { workerId: 108, fullName: "D. Lakshmi", status: 'Present', checkInTime: "2026-02-02T08:55:00Z" },
-        { workerId: 109, fullName: "G. Ramana", status: 'Present', checkInTime: "2026-02-02T09:20:00Z" },
-        { workerId: 110, fullName: "V. Krishna", status: 'Checked Out', checkInTime: "2026-02-02T08:25:00Z", checkOutTime: "2026-02-02T17:45:00Z" },
-        { workerId: 111, fullName: "T. Naidu", status: 'Present', checkInTime: "2026-02-02T08:40:00Z" },
-        { workerId: 112, fullName: "J. Sai", status: 'Present', checkInTime: "2026-02-02T09:00:00Z" }
-    ],
-    2: [
-        { workerId: 201, fullName: "Lakshmi Narayana", status: 'Present', checkInTime: "2026-02-02T08:15:00Z" },
-        { workerId: 202, fullName: "P. Rajesh", status: 'Present', checkInTime: "2026-02-02T08:30:00Z" },
-        { workerId: 203, fullName: "M. Satyam", status: 'Checked Out', checkOutTime: "2026-02-02T16:45:00Z" },
-        { workerId: 204, fullName: "K. Bhanu", status: 'Present', checkInTime: "2026-02-02T08:05:00Z" },
-        { workerId: 205, fullName: "A. Srikanth", status: 'Present', checkInTime: "2026-02-02T09:00:00Z" },
-        { workerId: 206, fullName: "V. Ravi", status: 'Checked Out', checkOutTime: "2026-02-02T17:10:00Z" },
-        { workerId: 207, fullName: "S. Anitha", status: 'Present', checkInTime: "2026-02-02T08:45:00Z" },
-        { workerId: 208, fullName: "R. Mohit", status: 'Present', checkInTime: "2026-02-02T08:55:00Z" }
-    ],
-    3: [
-        { workerId: 301, fullName: "Chandra Sekhar", status: 'Present', checkInTime: "2026-02-02T09:00:00Z" },
-        { workerId: 302, fullName: "Anitha Reddy", status: 'Present', checkInTime: "2026-02-02T09:15:00Z" },
-        { workerId: 303, fullName: "L. Babu", status: 'Checked Out', checkOutTime: "2026-02-02T17:30:00Z" },
-        { workerId: 304, fullName: "M. Ganga", status: 'Present', checkInTime: "2026-02-02T08:50:00Z" },
-        { workerId: 305, fullName: "T. Somu", status: 'Present', checkInTime: "2026-02-02T09:10:00Z" },
-        { workerId: 306, fullName: "B. Ratnam", status: 'Checked Out', checkOutTime: "2026-02-02T16:55:00Z" }
-    ],
-    4: [
-        { workerId: 401, fullName: "Mohan Krishna", status: 'Present', checkInTime: "2026-02-02T08:00:00Z" },
-        { workerId: 402, fullName: "S. Venkatesh", status: 'Present', checkInTime: "2026-02-02T08:45:00Z" },
-        { workerId: 403, fullName: "D. Rao", status: 'Checked Out', checkOutTime: "2026-02-02T18:00:00Z" },
-        { workerId: 404, fullName: "J. Bhavani", status: 'Present', checkInTime: "2026-02-02T08:20:00Z" },
-        { workerId: 405, fullName: "K. Mohan", status: 'Present', checkInTime: "2026-02-02T08:55:00Z" }
-    ],
-    5: [
-        { workerId: 501, fullName: "Venkatesh Prasad", status: 'Present', checkInTime: "2026-02-02T08:30:00Z" },
-        { workerId: 502, fullName: "K. Murali", status: 'Present', checkInTime: "2026-02-02T09:05:00Z" },
-        { workerId: 503, fullName: "S. Kumar", status: 'Checked Out', checkOutTime: "2026-02-02T17:00:00Z" },
-        { workerId: 504, fullName: "M. Surya", status: 'Present', checkInTime: "2026-02-02T08:40:00Z" },
-        { workerId: 505, fullName: "R. Prakash", status: 'Present', checkInTime: "2026-02-02T09:15:00Z" }
-    ],
-    6: [
-        { workerId: 601, fullName: "Anjaneyulu Rao", status: 'Present', checkInTime: "2026-02-02T08:50:00Z" },
-        { workerId: 602, fullName: "G. Ramu", status: 'Present', checkInTime: "2026-02-02T09:20:00Z" },
-        { workerId: 603, fullName: "A. Naidu", status: 'Checked Out', checkOutTime: "2026-02-02T16:30:00Z" },
-        { workerId: 604, fullName: "V. Raju", status: 'Present', checkInTime: "2026-02-02T08:55:00Z" },
-        { workerId: 605, fullName: "K. Madhavi", status: 'Present', checkInTime: "2026-02-02T09:30:00Z" }
-    ]
+    1: generateWorkers(24, 100),
+    2: generateWorkers(22, 200),
+    3: generateWorkers(25, 300),
+    4: generateWorkers(20, 400),
+    5: generateWorkers(28, 500),
+    6: generateWorkers(23, 600)
 };
 
 export const DUMMY_DEPARTMENT_WISE_STATS = [
