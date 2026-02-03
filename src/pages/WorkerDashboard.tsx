@@ -167,7 +167,7 @@ const WorkerDashboard: React.FC = () => {
       fetchData();
     } catch (error) {
       console.error("Check-in failed:", error);
-      toast.error("Check-in failed. Please try again.");
+      // toast.error("Check-in failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }

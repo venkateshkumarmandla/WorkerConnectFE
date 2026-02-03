@@ -23,8 +23,8 @@ const WorkerLogin: React.FC = () => {
     }
   }, [location.state]);
   const [formData, setFormData] = useState({
-    mobileNumber: '',
-    password: ''
+    mobileNumber: '7013815249',
+    password: 'Venky6520@'
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);

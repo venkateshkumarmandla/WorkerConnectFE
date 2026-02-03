@@ -14,9 +14,9 @@ const DepartmentLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     // username: '',
-    password: '',
+    password: 'Gowtham@123',
     // role: '',
-    emailId: ''
+    emailId: 'Gowtham@symp.in'
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);

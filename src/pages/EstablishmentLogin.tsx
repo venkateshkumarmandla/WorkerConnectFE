@@ -16,8 +16,8 @@ const EstablishmentLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     // email: '',
-    mobileNumber: "",
-    password: "",
+    mobileNumber: "7702253594",
+    password: "Password@123",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
