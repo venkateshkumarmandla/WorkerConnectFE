@@ -1,6 +1,23 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { MapPin, Maximize2, Minimize2, Users, Navigation } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import { MapPin, Maximize2, Minimize2, Users, Navigation, Building2 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+
+// Fix for default Leaflet marker icons in React
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+  iconUrl: icon,
+  shadowUrl: iconShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41]
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 interface LocationData {
   id: string;
@@ -24,208 +41,77 @@ interface LocationMapProps {
   onLocationClick?: (location: LocationData) => void;
 }
 
+// Component to handle map center updates
+const ChangeView = ({ center, zoom }: { center: { lat: number, lng: number }, zoom: number }) => {
+  const map = useMap();
+  map.setView(center, zoom);
+  return null;
+};
+
 const LocationMap: React.FC<LocationMapProps> = ({
   locations,
   center,
-  zoom = 15,
-  height = '400px',
+  zoom = 10, // Zoomed out to show district/state boundaries better
+  height = '600px',
   showControls = true,
   onLocationClick
 }) => {
   const { t } = useLanguage();
-  const mapRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
-  const [mapError, setMapError] = useState<string | null>(null);
 
-  // Since we can't use external map libraries, we'll create a simple coordinate display
-  // In a real implementation, you would integrate with Google Maps, Mapbox, or OpenStreetMap
+  // Default to Amaravati
+  const defaultCenter = center || { latitude: 16.5062, longitude: 80.6480 };
 
-  const defaultCenter = center || { latitude: 16.5062, longitude: 80.6480 }; // Amaravati
+  const toggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen);
+  };
 
   const getMarkerColor = (location: LocationData) => {
     switch (location.type) {
       case 'worker':
         return location.status === 'checked-in' ? '#10b981' : '#6b7280';
       case 'establishment':
-        return '#f59e0b';
+        return '#f59e0b'; // Amber
       case 'department':
-        return '#3b82f6';
+        return '#3b82f6'; // Blue
       default:
         return '#6b7280';
     }
   };
 
+  const createCustomIcon = (location: LocationData) => {
+    const color = getMarkerColor(location);
+    return L.divIcon({
+      className: 'custom-div-icon',
+      html: `<div style="background-color: ${color}; width: 12px; height: 12px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.3);"></div>`,
+      iconSize: [12, 12],
+      iconAnchor: [6, 6],
+      popupAnchor: [0, -6]
+    });
+  };
+
   const getStatusText = (location: LocationData) => {
     if (location.type === 'worker') {
       switch (location.status) {
-        case 'checked-in':
-          return t('worker.checkedIn');
-        case 'checked-out':
-          return t('worker.checkedOut');
-        case 'online':
-          return t('common.online');
-        case 'offline':
-          return t('common.offline');
-        default:
-          return t('status.unknown');
+        case 'checked-in': return t('worker.checkedIn');
+        case 'checked-out': return t('worker.checkedOut');
+        case 'online': return t('common.online');
+        case 'offline': return t('common.offline');
+        default: return t('status.unknown');
       }
     }
     return location.status || t('status.active');
   };
 
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
-
-  const handleLocationSelect = (location: LocationData) => {
-    setSelectedLocation(location);
-    // if (onLocationClick) {
-    //   onLocationClick(location);
-    // }
-  };
-
-  // Simple map visualization using CSS and positioning
-  const renderSimpleMap = () => {
-    const mapWidth = 100; // percentage
-    const mapHeight = 100; // percentage
-
-    return (
-      <div className="relative w-full h-full bg-gradient-to-br from-green-100 to-blue-100 rounded-lg overflow-hidden">
-        {/* Map Grid */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="grid grid-cols-10 grid-rows-10 h-full">
-            {Array.from({ length: 100 }).map((_, i) => (
-              <div key={i} className="border border-gray-300"></div>
-            ))}
-          </div>
-        </div>
-
-        {/* Center Marker */}
-        <div
-          className="absolute transform -translate-x-1/2 -translate-y-1/2"
-          style={{
-            left: '50%',
-            top: '50%'
-          }}
-        >
-          <div className="w-3 h-3 bg-red-500 rounded-full border-2 border-white shadow-lg"></div>
-        </div>
-
-        {/* Location Markers */}
-        {locations.map((location, index) => {
-          // Calculate relative position based on distance from center
-          const distance = calculateDistance(
-            defaultCenter.latitude,
-            defaultCenter.longitude,
-            location.latitude,
-            location.longitude
-          );
-
-          // Simple positioning logic (in real app, use proper map projection)
-          const offsetX = (location.longitude - defaultCenter.longitude) * 1000;
-          const offsetY = (defaultCenter.latitude - location.latitude) * 1000;
-
-          const x = Math.max(5, Math.min(95, 50 + offsetX));
-          const y = Math.max(5, Math.min(95, 50 + offsetY));
-
-          return (
-            <div
-              key={location.id}
-              className="absolute transform -translate-x-1/2 -translate-y-1/2 cursor-pointer"
-              style={{
-                left: `${x}%`,
-                top: `${y}%`
-              }}
-              onClick={() => handleLocationSelect(location)}
-            >
-              <div
-                className="w-4 h-4 rounded-full border-2 border-white shadow-lg hover:scale-110 transition-transform"
-                style={{ backgroundColor: getMarkerColor(location) }}
-              >
-                <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded opacity-0 hover:opacity-100 transition-opacity whitespace-nowrap">
-                  {location.name}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Selected Location Popup */}
-        {selectedLocation && (
-          <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-64 bg-white p-4 rounded-lg shadow-xl border border-gray-200 z-20 animate-in fade-in slide-in-from-bottom-4">
-            <div className="flex justify-between items-start mb-2">
-              <h4 className="font-bold text-gray-900">{selectedLocation.name}</h4>
-              <button
-                onClick={() => setSelectedLocation(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <Minimize2 className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="space-y-2 text-sm">
-              <p className="text-gray-600 flex justify-between">
-                <span>Status:</span>
-                <span className="font-medium text-gray-900">{getStatusText(selectedLocation)}</span>
-              </p>
-              {selectedLocation.totalWorkers !== undefined && (
-                <p className="text-gray-600 flex justify-between">
-                  <span>Total Workers:</span>
-                  <span className="font-bold text-blue-600">{selectedLocation.totalWorkers}</span>
-                </p>
-              )}
-              {selectedLocation.presentWorkers !== undefined && (
-                <p className="text-gray-600 flex justify-between">
-                  <span>Present:</span>
-                  <span className="font-bold text-green-600">{selectedLocation.presentWorkers}</span>
-                </p>
-              )}
-              <div className="pt-2 mt-2 border-t border-gray-100">
-                <button
-                  onClick={() => onLocationClick && onLocationClick(selectedLocation)}
-                  className="w-full py-1.5 bg-blue-50 text-blue-700 rounded-md text-xs font-semibold hover:bg-blue-100 transition-colors"
-                >
-                  View Details
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Compass */}
-        <div className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg">
-          <Navigation className="h-4 w-4 text-gray-600" />
-        </div>
-
-        {/* Scale */}
-        <div className="absolute bottom-4 left-4 bg-white px-2 py-1 rounded text-xs text-gray-600">
-          1km
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className={`${isFullscreen ? 'fixed inset-0 z-50 bg-white' : 'relative'}`}>
-      <div className="card-mobile h-full">
+      <div className="card-mobile h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 flex-shrink-0">
           <div className="flex items-center space-x-2">
             <MapPin className="h-5 w-5 text-blue-600" />
             <h3 className="text-lg font-semibold text-gray-900">
-              {t('department.locationMap')}
+              {t('department.locationMap')} (Andhra Pradesh)
             </h3>
           </div>
 
@@ -251,85 +137,92 @@ const LocationMap: React.FC<LocationMapProps> = ({
 
         {/* Map Container */}
         <div
-          ref={mapRef}
-          className="relative rounded-lg border border-gray-200 overflow-hidden"
-          style={{ height: isFullscreen ? 'calc(100vh - 120px)' : height }}
+          className="relative rounded-lg border border-gray-200 overflow-hidden flex-grow"
+          style={{ height: isFullscreen ? 'calc(100vh - 80px)' : height }}
         >
-          {mapError ? (
-            <div className="flex items-center justify-center h-full bg-gray-50">
-              <div className="text-center">
-                <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-2" />
-                <p className="text-gray-600">{mapError}</p>
-              </div>
-            </div>
-          ) : (
-            renderSimpleMap()
-          )}
-        </div>
+          <MapContainer
+            center={[defaultCenter.latitude, defaultCenter.longitude]}
+            zoom={zoom}
+            scrollWheelZoom={true}
+            style={{ height: '100%', width: '100%' }}
+            attributionControl={false}
+          >
+            <ChangeView center={{ lat: defaultCenter.latitude, lng: defaultCenter.longitude }} zoom={zoom} />
 
-        {/* Location List */}
-        <div className="mt-4 space-y-2 max-h-48 overflow-y-auto">
-          {locations.map((location) => (
-            <div
-              key={location.id}
-              className={`p-3 rounded-lg border cursor-pointer transition-colors ${selectedLocation?.id === location.id
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                }`}
-              onClick={() => handleLocationSelect(location)}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: getMarkerColor(location) }}
-                  ></div>
-                  <div>
-                    <p className="font-medium text-gray-900">{location.name}</p>
-                    <p className="text-sm text-gray-600">
-                      {getStatusText(location)}
-                    </p>
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+
+            {/* Render Locations */}
+            {locations.map((location) => (
+              <Marker
+                key={location.id}
+                position={[location.latitude, location.longitude]}
+                icon={createCustomIcon(location)}
+              >
+                <Popup>
+                  <div className="p-2 min-w-[200px]">
+                    <div className="flex items-start justify-between mb-2">
+                      <h4 className="font-bold text-gray-900 text-sm">{location.name}</h4>
+                      {/* {location.type === 'establishment' && <Building2 className="h-4 w-4 text-gray-500" />} */}
+                    </div>
+
+                    <div className="space-y-1 text-xs">
+                      <p className="text-gray-600 flex justify-between">
+                        <span>Status:</span>
+                        <span className="font-medium text-gray-900">{getStatusText(location)}</span>
+                      </p>
+
+                      {location.totalWorkers !== undefined && (
+                        <p className="text-gray-600 flex justify-between">
+                          <span>Total Workers:</span>
+                          <span className="font-bold text-blue-600">{location.totalWorkers}</span>
+                        </p>
+                      )}
+
+                      {location.presentWorkers !== undefined && (
+                        <p className="text-gray-600 flex justify-between">
+                          <span>Present:</span>
+                          <span className="font-bold text-green-600">{location.presentWorkers}</span>
+                        </p>
+                      )}
+
+                      <div className="pt-2 mt-2 border-t border-gray-100">
+                        <button
+                          onClick={() => onLocationClick && onLocationClick(location)}
+                          className="w-full py-1.5 bg-blue-50 text-blue-700 rounded-md text-xs font-semibold hover:bg-blue-100 transition-colors"
+                        >
+                          View Details
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs text-gray-500">
-                    {location.latitude.toFixed(4)}, {location.longitude.toFixed(4)}
-                  </p>
-                  {location.lastUpdate && (
-                    <p className="text-xs text-gray-400">
-                      {location.lastUpdate.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' })}
-                    </p>
-                  )}
-                  {location.totalWorkers !== undefined && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      <span className="font-semibold text-blue-600">{location.totalWorkers}</span> workers
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MapContainer>
 
-        {/* Legend */}
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Legend</h4>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span>{t('worker.checkedIn')}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-gray-500 rounded-full"></div>
-              <span>{t('worker.checkedOut')}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-              <span>{t('establishment.establishment')}</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-              <span>{t('department.department')}</span>
+          {/* Legend Overlay */}
+          <div className="absolute bottom-4 left-4 bg-white/90 p-3 rounded-lg shadow-md border border-gray-200 text-xs backdrop-blur-sm z-[1000]">
+            <h4 className="font-medium text-gray-700 mb-2">Legend</h4>
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ backgroundColor: '#10b981' }}></div>
+                <span>{t('worker.checkedIn')}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ backgroundColor: '#6b7280' }}></div>
+                <span>{t('worker.checkedOut')}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ backgroundColor: '#f59e0b' }}></div>
+                <span>{t('establishment.establishment')}</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ backgroundColor: '#3b82f6' }}></div>
+                <span>{t('department.department')}</span>
+              </div>
             </div>
           </div>
         </div>
