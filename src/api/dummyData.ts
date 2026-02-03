@@ -1,4 +1,4 @@
-import { DepartmentStats, EstablishmentSummary } from './department';
+import { DepartmentStats, EstablishmentSummary } from './types';
 import { EstablishmentDashboardData, WorkerSummary } from './establishment';
 
 // Helper to generate workers

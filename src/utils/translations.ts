@@ -679,6 +679,61 @@ export const translations = {
       invalidFormat: "Please upload a JPG or PNG image.",
       sizeExceeded: "Image size should be less than 2MB.",
       imageMissing: "No image uploaded. Default placeholder will be shown."
+    },
+    reports: {
+      title: "Reports & Analytics",
+      description: "Generate comprehensive reports and analytics for data-driven insights",
+      reportTypes: "Report Types",
+      filters: "Filters",
+      dateRange: "Date Range",
+      status: "Status",
+      district: "District",
+      generate: "Generate Report",
+      workerSummary: {
+        title: "Worker Summary Report",
+        description: "Comprehensive overview of all registered workers"
+      },
+      establishmentSummary: {
+        title: "Establishment Summary Report",
+        description: "Overview of all registered establishments"
+      },
+      attendanceReport: {
+        title: "Attendance Report",
+        description: "Daily and monthly attendance statistics"
+      },
+      complianceReport: {
+        title: "Compliance Report",
+        description: "Compliance status and violations summary"
+      },
+      registrationTrends: {
+        title: "Registration Trends",
+        description: "Monthly registration trends and analytics"
+      },
+      documentVerification: {
+        title: "Document Verification Report",
+        description: "Status of document verification process"
+      },
+      stats: {
+        activeWorkers: "Active Workers",
+        maleWorkers: "Male Workers",
+        femaleWorkers: "Female Workers",
+        skillDistribution: "Skill Distribution",
+        skilled: "Skilled",
+        semiSkilled: "Semi-Skilled",
+        unskilled: "Unskilled",
+        topDistricts: "Top 5 Districts",
+        projectValue: "Project Value",
+        categoryDistribution: "Category Distribution",
+        avgAttendance: "Average Attendance",
+        presentToday: "Present Today",
+        absentToday: "Absent Today",
+        monthlyTrend: "Monthly Attendance Trend"
+      },
+      common: {
+        loading: "Loading report data...",
+        noData: "No data available",
+        selectReport: "Select a report type to view preview"
+      }
     }
   },
   te: {
@@ -1359,6 +1414,61 @@ export const translations = {
       invalidFormat: "దయచేసి JPG లేదా PNG చిత్రాన్ని అప్‌లోడ్ చేయండి.",
       sizeExceeded: "చిత్రం పరిమాణం 2MB కంటే తక్కువ ఉండాలి.",
       imageMissing: "చిత్రం అప్‌లోడ్ చేయబడలేదు. డిఫాల్ట్ ప్లేస్‌హోల్డర్ చూపబడుతుంది."
+    },
+    reports: {
+      title: "నివేదికలు & విశ్లేషణలు",
+      description: "సమగ్ర నివేదికలు మరియు విశ్లేషణలను రూపొందించండి",
+      reportTypes: "నివేదిక రకాలు",
+      filters: "ఫిల్టర్లు",
+      dateRange: "తేదీ పరిధి",
+      status: "స్థితి",
+      district: "జిల్లా",
+      generate: "నివేదికను రూపొందించండి",
+      workerSummary: {
+        title: "కార్మికుల సారాంశ నివేదిక",
+        description: "నమోదిత కార్మికులందరి సమగ్ర వివరాలు"
+      },
+      establishmentSummary: {
+        title: "సంస్థ సారాంశ నివేదిక",
+        description: "అన్ని నమోదిత సంస్థల అవలోకనం"
+      },
+      attendanceReport: {
+        title: "హాజరు నివేదిక",
+        description: "వారీ మరియు నెలవారీ హాజరు గణాంకాలు"
+      },
+      complianceReport: {
+        title: "కంప్లైయన్స్ నివేదిక",
+        description: "నిబంధనల పాటించే స్థితి మరియు ఉల్లంఘనల సారాంశం"
+      },
+      registrationTrends: {
+        title: "నమోదు పోకడలు",
+        description: "నెలవారీ నమోదు పోకడలు మరియు విశ్లేషణలు"
+      },
+      documentVerification: {
+        title: "పత్రాల ధృవీకరణ నివేదిక",
+        description: "పత్రాల ధృవీకరణ ప్రక్రియ స్థితి"
+      },
+      stats: {
+        activeWorkers: "క్రియాశీల కార్మికులు",
+        maleWorkers: "పురుష కార్మికులు",
+        femaleWorkers: "మహిళా కార్మికులు",
+        skillDistribution: "నైపుణ్య పంపిణీ",
+        skilled: "నైపుణ్యం కలిగిన",
+        semiSkilled: "పాక్షిక నైపుణ్యం కలిగిన",
+        unskilled: "నైపుణ్యం లేని",
+        topDistricts: "టాప్ 5 జిల్లాలు",
+        projectValue: "ప్రాజెక్ట్ విలువ",
+        categoryDistribution: "వర్గ పంపిణీ",
+        avgAttendance: "సగటు హాజరు",
+        presentToday: "ఈ రోజు హాజరు",
+        absentToday: "ఈ రోజు గైర్హాజరు",
+        monthlyTrend: "నెలవారీ హాజరు ధోరణి"
+      },
+      common: {
+        loading: "నివేదిక డేటా లోడ్ అవుతోంది...",
+        noData: "డేటా అందుబాటులో లేదు",
+        selectReport: "ప్రివ్యూ చూడటానికి నివేదిక రకాన్ని ఎంచుకోండి"
+      }
     }
   }
 };

@@ -5,7 +5,8 @@ import LocationMap from '../components/LocationMap';
 import LastLoggedIn from './LastloggedIn';
 import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
-import { departmentApi, DepartmentStats, EstablishmentSummary } from '../api/department';
+import { departmentApi } from '../api/department';
+import { DepartmentStats, EstablishmentSummary } from '../api/types';
 import { DUMMY_DEPARTMENT_STATS, DUMMY_ESTABLISHMENTS } from '../api/dummyData';
 import WorkerPresentCount from '../components/WorkerPresentCount';
 

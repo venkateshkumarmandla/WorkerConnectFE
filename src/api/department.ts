@@ -1,32 +1,6 @@
 import { api } from './api';
 import { DUMMY_DEPARTMENT_STATS, DUMMY_ESTABLISHMENTS } from './dummyData';
-
-export interface DepartmentStats {
-    totalEstablishments: number;
-    totalWorkers: number;
-    workersPresent: number;
-    workersAbsent: number;
-    totalCheckIns: number;
-    totalCheckOuts: number;
-}
-
-export interface EstablishmentSummary {
-    establishmentId: number;
-    name: string;
-    location: string;
-    totalWorkers: number;
-    presentNow: number;
-    checkedInList: Array<{
-        workerId: number;
-        fullName: string;
-        checkInTime: string;
-    }>;
-    checkedOutList: Array<{
-        workerId: number;
-        fullName: string;
-        checkOutTime: string;
-    }>;
-}
+import { DepartmentStats, EstablishmentSummary } from './types';
 
 export const departmentApi = {
     // Fetch overall department statistics

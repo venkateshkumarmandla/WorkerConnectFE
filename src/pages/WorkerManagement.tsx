@@ -442,8 +442,8 @@ const WorkerManagement: React.FC = () => {
                       />
                     </th>
                     <th className="text-left py-3 px-4 font-medium text-gray-900">Worker</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">working From Date</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-900">working To Date</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">Working From Date</th>
+                    <th className="text-left py-3 px-4 font-medium text-gray-900">Working To Date</th>
                     {/* <th className="text-left py-3 px-4 font-medium text-gray-900">Attendance</th>
                     <th className="text-left py-3 px-4 font-medium text-gray-900">Location</th>
                     <th className="text-left py-3 px-4 font-medium text-gray-900">Last Active</th>
