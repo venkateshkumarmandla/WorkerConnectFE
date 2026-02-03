@@ -16,6 +16,7 @@ const EstablishmentDashboard: React.FC = () => {
   const [establishmentDetails] = useState<any>(locationState.state?.establishment || null);
   const establishmentId = id ? parseInt(id) : undefined;
   const [searchTerm, setSearchTerm] = useState('');
+  const [locationFilter, setLocationFilter] = useState('all');
 
   const [dashboardData, setDashboardData] = useState<EstablishmentDashboardData | null>(null);
   const [workers, setWorkers] = useState<WorkerSummary[]>([]);
@@ -45,6 +46,9 @@ const EstablishmentDashboard: React.FC = () => {
       return () => clearInterval(interval);
     }
   }, [user, establishmentId]);
+
+  // Get unique locations from workers
+  const locations = Array.from(new Set(workers.map(w => w.siteLocation).filter(Boolean)));
 
   const StatCard = ({ icon: Icon, title, value, color, link }: any) => (
     <Link to={link || '#'} className="card-mobile hover:shadow-xl transition-shadow group">
@@ -219,13 +223,27 @@ const EstablishmentDashboard: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-900">
                   Assigned Workers Overview
                 </h3>
-                <input
-                  type="text"
-                  placeholder="Search by name..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="px-3 py-1 border rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                />
+                <div className="flex items-center">
+                  <select
+                    value={locationFilter}
+                    onChange={(e) => setLocationFilter(e.target.value)}
+                    className="mr-2 px-3 py-1 border rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                  >
+                    <option value="all">All Locations</option>
+                    {locations.map((loc, idx) => (
+                      <option key={idx} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="text"
+                    placeholder="Search by name..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="px-3 py-1 border rounded text-xs focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                  />
+                </div>
               </div>
 
               <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
@@ -247,6 +265,7 @@ const EstablishmentDashboard: React.FC = () => {
                     ) : (
                       workers
                         .filter(w => w.fullName.toLowerCase().includes(searchTerm.toLowerCase()))
+                        .filter(w => locationFilter === 'all' || w.siteLocation === locationFilter)
                         .slice(0, visibleCount)
                         .map((worker: WorkerSummary) => (
                           <tr key={worker.workerId} className="border-b hover:bg-gray-50">
