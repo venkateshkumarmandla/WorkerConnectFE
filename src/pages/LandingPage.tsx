@@ -34,13 +34,12 @@ const LandingPage: React.FC = () => {
               <span>{t('landing.subtitle')}</span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tighter shadow-orange-50">
-              <span className="text-orange-600">AP </span>
-              <span className="text-orange-600">Worker Connect</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black leading-tight tracking-tighter shadow-orange-50 text-orange-600">
+              {t('landing.heroTitle')}
             </h1>
 
             <p className="text-xl md:text-2xl text-gray-800 leading-relaxed max-w-xl font-bold">
-              A comprehensive platform for worker registration, management, and departmental oversight.
+              {t('landing.heroDescription')}
             </p>
 
             <div className="flex flex-wrap gap-4 pt-4">

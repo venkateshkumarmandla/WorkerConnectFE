@@ -93,6 +93,8 @@ export const translations = {
     landing: {
       title: "AP WorkerConnect",
       subtitle: "Connecting Workers, Establishments, and Departments",
+      heroTitle: "AP Worker Connect",
+      heroDescription: "A comprehensive platform for worker registration, management, and departmental oversight.",
       description: "A comprehensive platform for worker registration, establishment management, and departmental oversight in the construction industry.",
       getStarted: "Get Started",
       registerAsWorker: "Register as Worker",
@@ -771,8 +773,10 @@ export const translations = {
       constructionSector: "నిర్మాణ రంగం"
     },
     landing: {
-      title: "AP సేవా పోర్టల్",
+      title: "ఆంధ్రప్రదేశ్ వర్కర్ కనెక్ట్",
       subtitle: "కార్మికులు, సంస్థలు మరియు విభాగాలను కనెక్ట్ చేస్తోంది",
+      heroTitle: "ఆంధ్రప్రదేశ్ వర్కర్ కనెక్ట్",
+      heroDescription: "కార్మికుల నమోదు, నిర్వహణ మరియు విభాగీయ పర్యవేక్షణ కోసం ఒక సమగ్ర వేదిక.",
       description: "నిర్మాణ పరిశ్రమలో కార్మికుల నమోదు, సంస్థ నిర్వహణ మరియు విభాగీయ పర్యవేక్షణ కోసం ఒక సమగ్ర వేదిక.",
       getStarted: "ప్రారంభించండి",
       registerAsWorker: "కార్మికుడిగా నమోదు చేయండి",
@@ -1330,10 +1334,10 @@ export const translations = {
       getStarted: "ప్రారంభించండి"
     },
     leaders: {
-      cmName: "శ్రీ నారా చంద్రబాబు నాయుడు",
+      cmName: "శ్రీ నారా చంద్రబాబు నాయుడు గారు",
       cmTitle: "గౌరవనీయులైన ముఖ్యమంత్రి",
       cmGovt: "ఆంధ్రప్రదేశ్ ప్రభుత్వం",
-      officialName: "శ్రీ వాసంశెట్టి సుభాష్",
+      officialName: "శ్రీ వాసంశెట్టి సుభాష్ గారు",
       officialTitle: "గౌరవనీయులైన కార్మిక, ఉపాధి, శిక్షణ మరియు ఫ్యాక్టరీల (LFB & IMS) శాఖ మంత్రి",
       officialGovt: "ఆంధ్రప్రదేశ్ ప్రభుత్వం",
       mainTitle: "AP సేవా పోర్టల్",

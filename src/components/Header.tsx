@@ -64,8 +64,8 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-white shadow-md border-b border-gray-100 safe-top sticky top-0 z-40">
-      <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between h-16 md:h-20 gap-4">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8">
+        <div className="flex items-center justify-between h-20 md:h-24 gap-6">
           {/* Logo & Portal Title */}
           <Link
             to={
@@ -73,14 +73,14 @@ const Header: React.FC = () => {
                 user?.type === 'establishment' ? '/dashboard/establishment' :
                   user?.type === 'department' ? '/dashboard/department' : '/'
             }
-            className="flex items-center gap-3 flex-shrink-0 group"
+            className="flex items-center gap-4 flex-shrink-0 group"
           >
-            <div className="w-12 h-12 md:w-14 md:h-14 bg-white rounded-full flex items-center justify-center p-1 shadow-sm border border-gray-100 group-hover:scale-105 transition-transform duration-300" aria-label={t('leaders.logoAltText')}>
+            <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-full flex items-center justify-center p-1 shadow-sm border border-gray-100 group-hover:scale-105 transition-transform duration-300" aria-label={t('leaders.logoAltText')}>
               <img src={APSymbol} alt="AP Symbol" className="w-full h-full object-contain" />
             </div>
-            <div className="flex flex-col">
-              <span className="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 text-xl md:text-2xl leading-tight tracking-tight">
-                AP Worker Connect
+            <div className="flex flex-col justify-center">
+              <span className="block font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 text-xl md:text-2xl leading-relaxed tracking-tight pb-2 pt-1 pr-1">
+                {t('landing.title')}
               </span>
               <span className="text-[10px] md:text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">
                 {t('navigation.constructionSector')}
