@@ -11,6 +11,8 @@ interface LocationData {
   status?: 'online' | 'offline' | 'checked-in' | 'checked-out';
   lastUpdate?: Date;
   accuracy?: number;
+  totalWorkers?: number;
+  presentWorkers?: number;
 }
 
 interface LocationMapProps {
@@ -39,7 +41,7 @@ const LocationMap: React.FC<LocationMapProps> = ({
   // Since we can't use external map libraries, we'll create a simple coordinate display
   // In a real implementation, you would integrate with Google Maps, Mapbox, or OpenStreetMap
 
-  const defaultCenter = center || { latitude: 17.3850, longitude: 78.4867 }; // Hyderabad
+  const defaultCenter = center || { latitude: 16.5062, longitude: 80.6480 }; // Amaravati
 
   const getMarkerColor = (location: LocationData) => {
     switch (location.type) {
@@ -90,9 +92,9 @@ const LocationMap: React.FC<LocationMapProps> = ({
 
   const handleLocationSelect = (location: LocationData) => {
     setSelectedLocation(location);
-    if (onLocationClick) {
-      onLocationClick(location);
-    }
+    // if (onLocationClick) {
+    //   onLocationClick(location);
+    // }
   };
 
   // Simple map visualization using CSS and positioning
@@ -160,6 +162,47 @@ const LocationMap: React.FC<LocationMapProps> = ({
             </div>
           );
         })}
+
+        {/* Selected Location Popup */}
+        {selectedLocation && (
+          <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-64 bg-white p-4 rounded-lg shadow-xl border border-gray-200 z-20 animate-in fade-in slide-in-from-bottom-4">
+            <div className="flex justify-between items-start mb-2">
+              <h4 className="font-bold text-gray-900">{selectedLocation.name}</h4>
+              <button
+                onClick={() => setSelectedLocation(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <Minimize2 className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="space-y-2 text-sm">
+              <p className="text-gray-600 flex justify-between">
+                <span>Status:</span>
+                <span className="font-medium text-gray-900">{getStatusText(selectedLocation)}</span>
+              </p>
+              {selectedLocation.totalWorkers !== undefined && (
+                <p className="text-gray-600 flex justify-between">
+                  <span>Total Workers:</span>
+                  <span className="font-bold text-blue-600">{selectedLocation.totalWorkers}</span>
+                </p>
+              )}
+              {selectedLocation.presentWorkers !== undefined && (
+                <p className="text-gray-600 flex justify-between">
+                  <span>Present:</span>
+                  <span className="font-bold text-green-600">{selectedLocation.presentWorkers}</span>
+                </p>
+              )}
+              <div className="pt-2 mt-2 border-t border-gray-100">
+                <button
+                  onClick={() => onLocationClick && onLocationClick(selectedLocation)}
+                  className="w-full py-1.5 bg-blue-50 text-blue-700 rounded-md text-xs font-semibold hover:bg-blue-100 transition-colors"
+                >
+                  View Details
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Compass */}
         <div className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg">
@@ -230,8 +273,8 @@ const LocationMap: React.FC<LocationMapProps> = ({
             <div
               key={location.id}
               className={`p-3 rounded-lg border cursor-pointer transition-colors ${selectedLocation?.id === location.id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                ? 'border-blue-500 bg-blue-50'
+                : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                 }`}
               onClick={() => handleLocationSelect(location)}
             >
@@ -255,6 +298,11 @@ const LocationMap: React.FC<LocationMapProps> = ({
                   {location.lastUpdate && (
                     <p className="text-xs text-gray-400">
                       {location.lastUpdate.toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  )}
+                  {location.totalWorkers !== undefined && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      <span className="font-semibold text-blue-600">{location.totalWorkers}</span> workers
                     </p>
                   )}
                 </div>

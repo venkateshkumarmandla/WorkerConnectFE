@@ -27,7 +27,7 @@ const WorkerDashboard: React.FC = () => {
   const [lastCheckOutTime, setLastCheckOutTime] = useState<string | null>(null);
 
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>([]);
-  const [currentMonth] = useState(new Date());
+  const [currentMonth, setCurrentMonth] = useState(new Date());
   const [assignment, setAssignment] = useState<{ id: number; estmtWorkerId: number; name: string } | null>(null);
 
 
@@ -110,20 +110,44 @@ const WorkerDashboard: React.FC = () => {
         setIsCheckedIn(false);
         setLastCheckInTime(null);
         setLastCheckOutTime(null);
+
+        // Month: January (Total 31 days)
+        setCurrentMonth(new Date('2026-01-01'));
+
         setRealStats({
-          present: 22,
+          present: 26,
           incomplete: 1,
-          absent: 4,
+          absent: 4, // 26+1+4 = 31 days
           totalGrossHours: "176.50",
-          totalEffectiveHours: "176.50",
-          totalGrossHoursToday: "4.50",
-          totalEffectiveHoursToday: "4.50"
+          totalEffectiveHours: "176.00", // 30 mins less
+          totalGrossHoursToday: "8.30",
+          totalEffectiveHoursToday: "8.00" // 30 mins less
         });
         setAssignment({
           id: 2,
           estmtWorkerId: 1001,
           name: "tekworks"
         });
+
+        // Recent Attendance: Feb 3 and Feb 2
+        setAttendanceRecords([
+          {
+            id: 'sim-1',
+            date: new Date('2026-02-03T10:00:00'),
+            checkInTime: new Date('2026-02-03T10:00:00'),
+            checkOutTime: new Date('2026-02-03T19:00:00'),
+            status: 'present'
+          },
+          {
+            id: 'sim-2',
+            date: new Date('2026-02-02T10:00:00'),
+            checkInTime: new Date('2026-02-02T10:00:00'),
+            checkOutTime: new Date('2026-02-02T19:00:00'),
+            status: 'present'
+          }
+        ]);
+        // Skip creating the rest of history from API for this user
+        return;
       }
 
       if (history && Array.isArray(history) && history.length > 0) {
@@ -163,7 +187,7 @@ const WorkerDashboard: React.FC = () => {
 
       const response = await checkInOrOut(payload);
       setIsCheckedIn(true);
-      toast.success(response.data.message || "Login successful");
+      // toast.success(response.data.message || "Login successful");
       fetchData();
     } catch (error) {
       console.error("Check-in failed:", error);
@@ -190,11 +214,11 @@ const WorkerDashboard: React.FC = () => {
 
       const response = await checkInOrOut(payload);
       setIsCheckedIn(false);
-      toast.success(response.data.message || "Logout successful");
+      // toast.success(response.data.message || "Logout successful");
       fetchData();
     } catch (error) {
       console.error("Check-out failed:", error);
-      toast.error("Check-out failed. Please try again.");
+      // toast.error("Check-out failed. Please try again.");
     } finally {
       setIsProcessing(false);
     }
@@ -241,14 +265,14 @@ const WorkerDashboard: React.FC = () => {
               <div className="p-3 bg-blue-50 rounded-lg border border-blue-100">
                 <p className="text-xs text-blue-600 font-semibold mb-1 uppercase tracking-wider">Last Login</p>
                 <p className="font-bold text-gray-800 text-lg">
-                  {lastCheckInTime ? new Date(lastCheckInTime).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                  {lastCheckInTime ? new Date(lastCheckInTime).toLocaleTimeString([], { hour12: true, hour: '2-digit', minute: '2-digit' }) : '10:00 AM'}
                 </p>
               </div>
 
               <div className="p-3 bg-orange-50 rounded-lg border border-orange-100">
                 <p className="text-xs text-orange-600 font-semibold mb-1 uppercase tracking-wider">Last Logout</p>
                 <p className="font-bold text-gray-800 text-lg">
-                  {lastCheckOutTime ? new Date(lastCheckOutTime).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit' }) : '--:--'}
+                  {lastCheckOutTime ? new Date(lastCheckOutTime).toLocaleTimeString([], { hour12: true, hour: '2-digit', minute: '2-digit' }) : '07:00 PM'}
                 </p>
               </div>
             </div>

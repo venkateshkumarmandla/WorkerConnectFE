@@ -19,7 +19,7 @@ const WorkerLogin: React.FC = () => {
 
   React.useEffect(() => {
     if (location.state?.message) {
-      toast.success(location.state.message);
+      // toast.success(location.state.message);
     }
   }, [location.state]);
   const [formData, setFormData] = useState({
@@ -125,7 +125,7 @@ const WorkerLogin: React.FC = () => {
 
         // Use message from backend if available
         const attendanceMsg = response.attendanceMessage || "🟢 You are logged in.";
-        toast.success(attendanceMsg);
+        // toast.success(attendanceMsg);
 
         navigate('/dashboard/worker');
 
@@ -147,7 +147,7 @@ const WorkerLogin: React.FC = () => {
     } catch (error) {
       console.error('❌ Login check failed', error);
       setIsLoading(false);
-      toast.error(t('auth.invalidCredentials') || "Invalid Mobile Number or Password");
+      // toast.error(t('auth.invalidCredentials') || "Invalid Mobile Number or Password");
     }
   };
 

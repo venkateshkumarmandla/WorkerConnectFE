@@ -86,7 +86,7 @@ const EstablishmentLogin: React.FC = () => {
 
     } catch (error) {
       console.error('❌ Login failed', error);
-      toast.error(t('auth.invalidCredentials') || "Invalid Credentials");
+      // toast.error(t('auth.invalidCredentials') || "Invalid Credentials");
     } finally {
       setIsLoading(false);
     }

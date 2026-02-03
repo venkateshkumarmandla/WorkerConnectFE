@@ -69,7 +69,8 @@ export const translations = {
       total: "Total",
       present: "Present",
       absent: "Absent",
-      checkedOut: "Checked Out"
+      checkedOut: "Checked Out",
+      todayStatus: "Today's Status"
     },
     navigation: {
       home: "Home",
@@ -748,7 +749,8 @@ export const translations = {
       total: "మొత్తం",
       present: "హాజరు",
       absent: "గైర్హాజరు",
-      checkedOut: "చెక్ అవుట్"
+      checkedOut: "చెక్ అవుట్",
+      todayStatus: "నేటి స్థితి"
     },
     navigation: {
       home: "హోమ్",

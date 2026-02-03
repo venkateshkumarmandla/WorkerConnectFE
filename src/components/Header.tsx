@@ -41,12 +41,12 @@ const Header: React.FC = () => {
       const response: any = await logoutUser();
       const msg = response?.attendanceMessage || logoutMsg;
       logout();
-      toast.success(msg);
+      // toast.success(msg);
       navigate('/');
       setMobileMenuOpen(false);
     } catch (error) {
       logout();
-      toast.success(logoutMsg);
+      // toast.success(logoutMsg);
       navigate('/');
       setMobileMenuOpen(false);
     }

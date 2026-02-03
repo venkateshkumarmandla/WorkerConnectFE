@@ -66,7 +66,7 @@ const DepartmentDashboard: React.FC = () => {
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-              👥 <span className="text-blue-600 font-extrabold">{(user as any)?.name || (user as any)?.fullName || (user as any)?.firstName || 'Gowtham'}</span>
+              👥 <span className="text-blue-600 font-extrabold">{(user as any)?.name || (user as any)?.fullName || (user as any)?.firstName || 'Gowtham Thotapalli'}</span>
             </h1>
             <p className="text-gray-600">
               Real-time monitoring of all establishments and workers
@@ -83,7 +83,7 @@ const DepartmentDashboard: React.FC = () => {
         </div>
 
         {/* Attendance Status Prompts */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           {loading ? (
             <div className="flex items-center text-blue-600 space-x-2 animate-pulse bg-blue-50 p-3 rounded-lg border border-blue-100">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
@@ -100,7 +100,7 @@ const DepartmentDashboard: React.FC = () => {
               <span className="text-sm font-medium">ℹ️ No attendance data found for this period.</span>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* View Toggle */}
         <div className="mb-6 flex justify-between items-center">
@@ -238,10 +238,12 @@ const DepartmentDashboard: React.FC = () => {
                 name: est.name,
                 type: 'establishment',
                 status: 'online',
-                latitude: 17.3850 + (est.establishmentId * 0.01),
-                longitude: 78.4867 + (est.establishmentId * 0.01)
+                latitude: 16.5062 + (est.establishmentId * 0.01),
+                longitude: 80.6480 + (est.establishmentId * 0.01),
+                totalWorkers: est.totalWorkers,
+                presentWorkers: est.presentNow
               }))}
-              center={{ latitude: 17.3850, longitude: 78.4867 }}
+              center={{ latitude: 16.5062, longitude: 80.6480 }}
               zoom={10}
               height="600px"
               showControls={true}

@@ -18,6 +18,11 @@ const EstablishmentDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [locationFilter, setLocationFilter] = useState('all');
 
+  // Default to yesterday if no last login
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  yesterday.setHours(10, 0, 0, 0);
+
   const [dashboardData, setDashboardData] = useState<EstablishmentDashboardData | null>(null);
   const [workers, setWorkers] = useState<WorkerSummary[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,13 +89,13 @@ const EstablishmentDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <button
+          {/* <button
             onClick={() => navigate(-1)}
             className="flex items-center text-blue-600 hover:text-blue-800 mb-4 font-medium transition-colors"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             {t('common.back') || 'Back'}
-          </button>
+          </button> */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center space-x-4 mb-2">
               <div className="flex-shrink-0">
@@ -117,13 +122,13 @@ const EstablishmentDashboard: React.FC = () => {
             </div>
             <div className="flex flex-col md:flex-row gap-4 items-end md:items-center">
               <WorkerPresentCount count={dashboardData?.presentNow ?? null} />
-              {!establishmentId && <LastLoggedIn time={user?.lastLoggedIn || undefined} />}
+              {!establishmentId && <LastLoggedIn time={user?.lastLoggedIn || yesterday.toISOString()} />}
             </div>
           </div>
         </div>
 
         {/* Logo Missing Prompt */}
-        {user?.type === 'establishment' && !user.logoUrl && (
+        {/* {user?.type === 'establishment' && !user.logoUrl && (
           <div className="mb-6 bg-orange-50 border-l-4 border-orange-500 p-4 rounded-r-lg shadow-sm flex items-start animate-pulse">
             <AlertCircle className="h-5 w-5 text-orange-600 mr-3 mt-0.5" />
             <div>
@@ -135,10 +140,10 @@ const EstablishmentDashboard: React.FC = () => {
               </Link>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Attendance Status Prompts */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           {loading ? (
             <div className="flex items-center text-blue-600 space-x-2 animate-pulse bg-blue-50 p-3 rounded-lg border border-blue-100">
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
@@ -155,7 +160,7 @@ const EstablishmentDashboard: React.FC = () => {
               <span className="text-sm font-medium">ℹ️ No worker attendance found for this period.</span>
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">

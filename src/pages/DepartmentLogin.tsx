@@ -16,7 +16,7 @@ const DepartmentLogin: React.FC = () => {
     // username: '',
     password: 'Gowtham@123',
     // role: '',
-    emailId: 'Gowtham@symp.in'
+    emailId: 'Gowtham@Labourdept.in'
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +76,7 @@ const DepartmentLogin: React.FC = () => {
     try {
       const data = await departmentLogin(formData);
       console.log("Login successful:", data);
-      toast.success("Welcome back! Login successful.");
+      // toast.success("Welcome back! Login successful.");
       login({
         type: "department",
         departmentRoleId: data.departmentRoleId,
@@ -92,7 +92,7 @@ const DepartmentLogin: React.FC = () => {
       navigate("/dashboard/department");
     } catch (err: any) {
       const errorMsg = err?.response?.data?.message || err?.message || "Invalid credentials or server error";
-      toast.error(errorMsg);
+      // toast.error(errorMsg);
       console.error("Login failed:", err);
     } finally {
       setIsLoading(false);
